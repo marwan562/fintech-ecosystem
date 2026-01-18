@@ -30,7 +30,6 @@ func NewGatewayHandler(authServiceURL, paymentServiceURL, ledgerServiceURL strin
 // proxyRequest creates a reverse proxy to the target URL and serves the request.
 func (h *GatewayHandler) proxyRequest(target string, w http.ResponseWriter, r *http.Request) {
 	url, err := url.Parse(target)
-	fmt.Printf("original url:%v, parse url:%v", target, url)
 	if err != nil {
 		log.Printf("Error parsing target URL %s: %v", target, err)
 		jsonutil.WriteErrorJSON(w, "Internal Server Error; Invalid Target")
@@ -48,6 +47,9 @@ func (h *GatewayHandler) proxyRequest(target string, w http.ResponseWriter, r *h
 		// Set the Host header to the target host
 		req.Host = url.Host
 	}
+
+	// logging the forward proxy request
+	fmt.Printf("\nForward request:%v", r.URL)
 
 	proxy.ServeHTTP(w, r)
 }
@@ -91,9 +93,9 @@ func main() {
 	// Configuration (In a real app, load from env)
 	// Note: Auth service is on :8081
 	gateway := NewGatewayHandler(
-		"http://localhost:8081",
-		"http://localhost:8082", // Placeholder
-		"http://localhost:8083", // Placeholder
+		"http://127.0.0.1:8081",
+		"http://127.0.0.1:8082",
+		"http://127.0.0.1:8083",
 	)
 
 	server := &http.Server{
