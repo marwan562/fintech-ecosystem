@@ -137,7 +137,7 @@ const file_proto_auth_auth_proto_rawDesc = "" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12 \n" +
 	"\venvironment\x18\x03 \x01(\tR\venvironment2Q\n" +
 	"\vAuthService\x12B\n" +
-	"\vValidateKey\x12\x18.auth.ValidateKeyRequest\x1a\x19.auth.ValidateKeyResponseB\x1aZ\x18microservices/proto/authb\x06proto3"
+	"\vValidateKey\x12\x18.auth.ValidateKeyRequest\x1a\x19.auth.ValidateKeyResponseB3Z1github.com/marwan562/fintech-ecosystem/proto/authb\x06proto3"
 
 var (
 	file_proto_auth_auth_proto_rawDescOnce sync.Once

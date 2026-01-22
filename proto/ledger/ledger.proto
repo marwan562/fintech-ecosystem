@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ledger;
 
-option go_package = "microservices/proto/ledger";
+option go_package = "github.com/marwan562/fintech-ecosystem/proto/ledger";
 
 import "google/protobuf/timestamp.proto";
 

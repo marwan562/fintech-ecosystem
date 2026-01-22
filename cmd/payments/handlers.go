@@ -2,24 +2,29 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
-	"microservices/internal/payment"
-	"microservices/pkg/bank"
-	"microservices/pkg/jsonutil"
-	"microservices/pkg/jwtutil"
 	"net/http"
 	"strings"
 
-	pb "microservices/proto/ledger"
+	"github.com/marwan562/fintech-ecosystem/internal/payment"
+	"github.com/marwan562/fintech-ecosystem/pkg/bank"
+	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+	"github.com/marwan562/fintech-ecosystem/pkg/jwtutil"
+
+	"github.com/marwan562/fintech-ecosystem/pkg/messaging"
+	pb "github.com/marwan562/fintech-ecosystem/proto/ledger"
 
 	"github.com/redis/go-redis/v9"
 )
 
 type PaymentHandler struct {
-	repo         *payment.Repository
-	bankClient   bank.Client
-	rdb          *redis.Client
-	ledgerClient pb.LedgerServiceClient
+	repo          *payment.Repository
+	bankClient    bank.Client
+	rdb           *redis.Client
+	ledgerClient  pb.LedgerServiceClient
+	kafkaProducer *messaging.KafkaProducer
+	rabbitClient  *messaging.RabbitMQClient
 }
 
 // IdempotencyMiddleware wraps a handler to ensure idempotency.
@@ -208,6 +213,12 @@ func (h *PaymentHandler) ConfirmPaymentIntent(w http.ResponseWriter, r *http.Req
 	eventBody, _ := json.Marshal(event)
 	h.rdb.Publish(r.Context(), "webhook_events", eventBody)
 
+	// Emit to Kafka for persistent audit trail
+	if err := h.kafkaProducer.Publish(r.Context(), intent.ID, eventBody); err != nil {
+		log.Printf("Failed to publish event to Kafka: %v", err)
+		// We still proceed, but Kafka failure should be alerted in production
+	}
+
 	// Record in Ledger via gRPC
 	_, err = h.ledgerClient.RecordTransaction(r.Context(), &pb.RecordTransactionRequest{
 		AccountId:   "user_" + intent.UserID, // Derived account ID
@@ -224,5 +235,18 @@ func (h *PaymentHandler) ConfirmPaymentIntent(w http.ResponseWriter, r *http.Req
 	}
 
 	intent.Status = "succeeded"
+
+	// Queue notification to RabbitMQ (Email/SMS)
+	notif := map[string]string{
+		"type":    "email",
+		"to":      "user_" + intent.UserID + "@example.com",
+		"subject": "Payment Succeeded!",
+		"body":    "Your payment of " + fmt.Sprintf("%d", intent.Amount) + " " + intent.Currency + " was successful.",
+	}
+	notifBody, _ := json.Marshal(notif)
+	if err := h.rabbitClient.Publish(r.Context(), "notifications", notifBody); err != nil {
+		log.Printf("Failed to queue notification: %v", err)
+	}
+
 	jsonutil.WriteJSON(w, http.StatusOK, intent)
 }

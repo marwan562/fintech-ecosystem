@@ -2,13 +2,16 @@ package main
 
 import (
 	"log"
-	"microservices/internal/payment"
-	"microservices/pkg/bank"
-	"microservices/pkg/database"
-	"microservices/pkg/jsonutil"
-	pb "microservices/proto/ledger"
 	"net/http"
 	"os"
+	"strings"
+
+	"github.com/marwan562/fintech-ecosystem/internal/payment"
+	"github.com/marwan562/fintech-ecosystem/pkg/bank"
+	"github.com/marwan562/fintech-ecosystem/pkg/database"
+	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+	"github.com/marwan562/fintech-ecosystem/pkg/messaging"
+	pb "github.com/marwan562/fintech-ecosystem/proto/ledger"
 
 	"context"
 
@@ -74,11 +77,35 @@ func main() {
 	defer conn.Close()
 	ledgerClient := pb.NewLedgerServiceClient(conn)
 
+	// Setup Kafka Producer
+	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
+	if kafkaBrokers == "" {
+		kafkaBrokers = "localhost:9092"
+	}
+	brokers := strings.Split(kafkaBrokers, ",")
+	kafkaProducer := messaging.NewKafkaProducer(brokers, "payments")
+	defer kafkaProducer.Close()
+
+	// Setup RabbitMQ Client
+	rabbitURL := os.Getenv("RABBITMQ_URL")
+	if rabbitURL == "" {
+		rabbitURL = "amqp://user:password@localhost:5672/"
+	}
+	rabbitClient, err := messaging.NewRabbitMQClient(rabbitURL)
+	if err != nil {
+		log.Printf("Warning: Failed to connect to RabbitMQ: %v", err)
+	} else {
+		defer rabbitClient.Close()
+		rabbitClient.DeclareQueue("notifications")
+	}
+
 	handler := &PaymentHandler{
-		repo:         repo,
-		bankClient:   bankClient,
-		rdb:          rdb,
-		ledgerClient: ledgerClient,
+		repo:          repo,
+		bankClient:    bankClient,
+		rdb:           rdb,
+		ledgerClient:  ledgerClient,
+		kafkaProducer: kafkaProducer,
+		rabbitClient:  rabbitClient,
 	}
 
 	mux := http.NewServeMux()

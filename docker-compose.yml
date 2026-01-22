@@ -37,6 +37,45 @@ services:
     networks:
       - microservices-net
 
+  # Kafka (Redpanda)
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
+    container_name: microservices_redpanda
+    command:
+      - redpanda
+      - start
+      - --smp
+      - '1'
+      - --reserve-memory
+      - 0M
+      - --overprovisioned
+      - --node-id
+      - '0'
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    networks:
+      - microservices-net
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: microservices_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    networks:
+      - microservices-net
+
   ledger_db:
     image: postgres:15-alpine
     container_name: microservices_ledger_db
@@ -124,6 +163,20 @@ services:
     networks:
       - microservices-net
 
+  notifications:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      args:
+        SERVICE_NAME: notifications
+    container_name: microservices_notifications
+    environment:
+      - RABBITMQ_URL=amqp://user:password@rabbitmq:5672/
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
 networks:
   microservices-net:
     driver: bridge
@@ -132,3 +185,4 @@ volumes:
   postgres_data:
   payments_data:
   ledger_data:
+  redpanda_data:

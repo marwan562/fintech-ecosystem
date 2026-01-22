@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"os"
 
-	"microservices/internal/auth"
-	"microservices/pkg/database"
-	"microservices/pkg/jsonutil"
-	pb "microservices/proto/auth"
+	"github.com/marwan562/fintech-ecosystem/internal/auth"
+	"github.com/marwan562/fintech-ecosystem/pkg/database"
+	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+	pb "github.com/marwan562/fintech-ecosystem/proto/auth"
 
 	"google.golang.org/grpc"
 )

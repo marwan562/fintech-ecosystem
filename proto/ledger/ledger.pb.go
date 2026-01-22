@@ -290,7 +290,7 @@ const file_proto_ledger_ledger_proto_rawDesc = "" +
 	"\rLedgerService\x12X\n" +
 	"\x11RecordTransaction\x12 .ledger.RecordTransactionRequest\x1a!.ledger.RecordTransactionResponse\x12C\n" +
 	"\n" +
-	"GetAccount\x12\x19.ledger.GetAccountRequest\x1a\x1a.ledger.GetAccountResponseB\x1cZ\x1amicroservices/proto/ledgerb\x06proto3"
+	"GetAccount\x12\x19.ledger.GetAccountRequest\x1a\x1a.ledger.GetAccountResponseB5Z3github.com/marwan562/fintech-ecosystem/proto/ledgerb\x06proto3"
 
 var (
 	file_proto_ledger_ledger_proto_rawDescOnce sync.Once

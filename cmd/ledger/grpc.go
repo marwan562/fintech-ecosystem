@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"log"
-	"microservices/internal/ledger"
-	pb "microservices/proto/ledger"
+
+	"github.com/marwan562/fintech-ecosystem/internal/ledger"
+	pb "github.com/marwan562/fintech-ecosystem/proto/ledger"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )

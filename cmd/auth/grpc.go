@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"log"
-	"microservices/internal/auth"
-	pb "microservices/proto/auth"
+
+	"github.com/marwan562/fintech-ecosystem/internal/auth"
+	pb "github.com/marwan562/fintech-ecosystem/proto/auth"
 )
 
 type AuthGRPCServer struct {

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package auth;
 
-option go_package = "microservices/proto/auth";
+option go_package = "github.com/marwan562/fintech-ecosystem/proto/auth";
 
 service AuthService {
   rpc ValidateKey(ValidateKeyRequest) returns (ValidateKeyResponse);

@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"microservices/pkg/apikey"
-	"microservices/pkg/jsonutil"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -13,7 +11,10 @@ import (
 	"strings"
 	"time"
 
-	pb "microservices/proto/auth"
+	"github.com/marwan562/fintech-ecosystem/pkg/apikey"
+	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+
+	pb "github.com/marwan562/fintech-ecosystem/proto/auth"
 
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"

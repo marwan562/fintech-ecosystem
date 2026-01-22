@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"microservices/internal/ledger"
-	"microservices/pkg/jsonutil"
 	"net/http"
 	"strings"
+
+	"github.com/marwan562/fintech-ecosystem/internal/ledger"
+	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
 )
 
 type LedgerHandler struct {

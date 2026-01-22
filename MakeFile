@@ -1,4 +1,4 @@
-.PHONY: build up down logs cli clean test
+.PHONY: build up down logs cli clean test proto
 
 # Build all service binaries locally
 build:
@@ -6,6 +6,7 @@ build:
 	go build -o bin/payments ./cmd/payments
 	go build -o bin/ledger ./cmd/ledger
 	go build -o bin/gateway ./cmd/gateway
+	go build -o bin/notifications ./cmd/notifications
 	go build -o bin/micro ./cmd/cli
 
 # Start the entire stack in Docker

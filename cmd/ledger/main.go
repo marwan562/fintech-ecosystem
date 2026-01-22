@@ -2,13 +2,14 @@ package main
 
 import (
 	"log"
-	"microservices/internal/ledger"
-	"microservices/pkg/database"
-	"microservices/pkg/jsonutil"
-	pb "microservices/proto/ledger"
+	"github.com/marwan562/fintech-ecosystem/internal/ledger"
+	"github.com/marwan562/fintech-ecosystem/pkg/database"
+	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+	pb "github.com/marwan562/fintech-ecosystem/proto/ledger"
 	"net"
 	"net/http"
 	"os"
+	"strings"
 
 	"google.golang.org/grpc"
 )
@@ -42,6 +43,15 @@ func main() {
 	}
 
 	repo := ledger.NewRepository(db)
+
+	// Start Kafka Consumer for Event Sourcing
+	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
+	if kafkaBrokers == "" {
+		kafkaBrokers = "localhost:9092"
+	}
+	brokers := strings.Split(kafkaBrokers, ",")
+	go StartKafkaConsumer(brokers, repo)
+
 	handler := &LedgerHandler{repo: repo}
 
 	mux := http.NewServeMux()

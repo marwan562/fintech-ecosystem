@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"microservices/internal/auth"
-	"microservices/pkg/apikey"
-	"microservices/pkg/bcryptutil"
-	"microservices/pkg/jsonutil"
-	"microservices/pkg/jwtutil"
 	"net/http"
 	"strings"
+
+	"github.com/marwan562/fintech-ecosystem/internal/auth"
+	"github.com/marwan562/fintech-ecosystem/pkg/apikey"
+	"github.com/marwan562/fintech-ecosystem/pkg/bcryptutil"
+	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+	"github.com/marwan562/fintech-ecosystem/pkg/jwtutil"
 )
 
 type GenerateAPIKeyRequest struct {
