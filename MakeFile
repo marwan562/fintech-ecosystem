@@ -33,3 +33,13 @@ clean:
 # Run all tests
 test:
 	go test ./...
+
+# Generate Go code from Protobuf definitions
+proto:
+	mkdir -p proto/auth proto/ledger
+	protoc --go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		proto/auth/auth.proto
+	protoc --go_out=. --go_opt=paths=source_relative \
+		--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+		proto/ledger/ledger.proto

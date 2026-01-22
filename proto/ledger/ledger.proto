@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package ledger;
+
+option go_package = "microservices/proto/ledger";
+
+import "google/protobuf/timestamp.proto";
+
+service LedgerService {
+  rpc RecordTransaction(RecordTransactionRequest) returns (RecordTransactionResponse);
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+}
+
+message RecordTransactionRequest {
+  string account_id = 1;
+  int64 amount = 2; // In cents
+  string currency = 3;
+  string description = 4;
+  string reference_id = 5; // e.g. PaymentIntent ID
+}
+
+message RecordTransactionResponse {
+  string transaction_id = 1;
+  string status = 2;
+}
+
+message GetAccountRequest {
+  string account_id = 1;
+}
+
+message GetAccountResponse {
+  string account_id = 1;
+  int64 balance = 2;
+  string currency = 3;
+  google.protobuf.Timestamp created_at = 4;
+}

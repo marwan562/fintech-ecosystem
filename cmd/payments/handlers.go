@@ -10,13 +10,16 @@ import (
 	"net/http"
 	"strings"
 
+	pb "microservices/proto/ledger"
+
 	"github.com/redis/go-redis/v9"
 )
 
 type PaymentHandler struct {
-	repo       *payment.Repository
-	bankClient bank.Client
-	rdb        *redis.Client
+	repo         *payment.Repository
+	bankClient   bank.Client
+	rdb          *redis.Client
+	ledgerClient pb.LedgerServiceClient
 }
 
 // IdempotencyMiddleware wraps a handler to ensure idempotency.
@@ -204,6 +207,21 @@ func (h *PaymentHandler) ConfirmPaymentIntent(w http.ResponseWriter, r *http.Req
 	}
 	eventBody, _ := json.Marshal(event)
 	h.rdb.Publish(r.Context(), "webhook_events", eventBody)
+
+	// Record in Ledger via gRPC
+	_, err = h.ledgerClient.RecordTransaction(r.Context(), &pb.RecordTransactionRequest{
+		AccountId:   "user_" + intent.UserID, // Derived account ID
+		Amount:      intent.Amount,
+		Currency:    intent.Currency,
+		Description: "Payment for intent " + intent.ID,
+		ReferenceId: intent.ID,
+	})
+	if err != nil {
+		log.Printf("Failed to record transaction in ledger: %v", err)
+		// We log it, but the payment itself succeeded in the bank and our DB.
+		// In a production system, we might want to use a transactional outbox
+		// or retry mechanism to ensure the ledger is eventually consistent.
+	}
 
 	intent.Status = "succeeded"
 	jsonutil.WriteJSON(w, http.StatusOK, intent)

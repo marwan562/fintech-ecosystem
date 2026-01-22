@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"microservices/pkg/apikey"
@@ -15,8 +13,12 @@ import (
 	"strings"
 	"time"
 
+	pb "microservices/proto/auth"
+
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // GatewayHandler holds the configuration for upstream service URLs and Redis.
@@ -26,10 +28,11 @@ type GatewayHandler struct {
 	ledgerServiceURL  string
 	rdb               *redis.Client
 	upgrader          websocket.Upgrader
+	authClient        pb.AuthServiceClient
 }
 
 // NewGatewayHandler creates a new instance of GatewayHandler.
-func NewGatewayHandler(auth, payment, ledger string, rdb *redis.Client) *GatewayHandler {
+func NewGatewayHandler(auth, payment, ledger string, rdb *redis.Client, authClient pb.AuthServiceClient) *GatewayHandler {
 	return &GatewayHandler{
 		authServiceURL:    auth,
 		paymentServiceURL: payment,
@@ -38,33 +41,19 @@ func NewGatewayHandler(auth, payment, ledger string, rdb *redis.Client) *Gateway
 		upgrader: websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool { return true },
 		},
+		authClient: authClient,
 	}
 }
 
 // validateKeyWithAuthService calls the Auth service to validate the API key hash.
 func (h *GatewayHandler) validateKeyWithAuthService(ctx context.Context, keyHash string) (string, string, bool) {
-	reqBody, _ := json.Marshal(map[string]string{"key_hash": keyHash})
-	resp, err := http.Post(h.authServiceURL+"/validate_key", "application/json", bytes.NewBuffer(reqBody))
+	res, err := h.authClient.ValidateKey(ctx, &pb.ValidateKeyRequest{KeyHash: keyHash})
 	if err != nil {
-		log.Printf("Auth service validation call failed: %v", err)
-		return "", "", false
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
+		log.Printf("Auth service gRPC validation call failed: %v", err)
 		return "", "", false
 	}
 
-	var res struct {
-		Valid       bool   `json:"valid"`
-		UserID      string `json:"user_id"`
-		Environment string `json:"environment"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
-		return "", "", false
-	}
-
-	return res.UserID, res.Environment, res.Valid
+	return res.UserId, res.Environment, res.Valid
 }
 
 // checkRateLimit checks if the key has exceeded 100 req/min.
@@ -252,7 +241,19 @@ func main() {
 		log.Println("Redis connection established")
 	}
 
-	gateway := NewGatewayHandler(authURL, paymentURL, ledgerURL, rdb)
+	// Setup Auth Service gRPC Client
+	authGRPCAddr := os.Getenv("AUTH_GRPC_ADDR")
+	if authGRPCAddr == "" {
+		authGRPCAddr = "localhost:50051"
+	}
+	conn, err := grpc.Dial(authGRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect to auth gRPC: %v", err)
+	}
+	defer conn.Close()
+	authClient := pb.NewAuthServiceClient(conn)
+
+	gateway := NewGatewayHandler(authURL, paymentURL, ledgerURL, rdb, authClient)
 
 	server := &http.Server{
 		Addr:    ":8080",

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package auth;
+
+option go_package = "microservices/proto/auth";
+
+service AuthService {
+  rpc ValidateKey(ValidateKeyRequest) returns (ValidateKeyResponse);
+}
+
+message ValidateKeyRequest {
+  string key_hash = 1;
+}
+
+message ValidateKeyResponse {
+  bool valid = 1;
+  string user_id = 2;
+  string environment = 3;
+}

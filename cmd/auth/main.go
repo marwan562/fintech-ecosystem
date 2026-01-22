@@ -2,12 +2,16 @@ package main
 
 import (
 	"log"
+	"net"
 	"net/http"
 	"os"
 
 	"microservices/internal/auth"
 	"microservices/pkg/database"
 	"microservices/pkg/jsonutil"
+	pb "microservices/proto/auth"
+
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -63,8 +67,23 @@ func main() {
 	// Internal endpoint for Gateway Validation
 	mux.HandleFunc("/validate_key", handler.ValidateAPIKey)
 
-	log.Println("Auth service starting on :8081")
-	if err := http.ListenAndServe(":8081", mux); err != nil {
-		log.Fatalf("Server failed: %v", err)
+	log.Println("Auth service HTTP starting on :8081")
+	go func() {
+		if err := http.ListenAndServe(":8081", mux); err != nil {
+			log.Fatalf("HTTP server failed: %v", err)
+		}
+	}()
+
+	// Start gRPC Server
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		log.Fatalf("failed to listen for gRPC: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterAuthServiceServer(s, NewAuthGRPCServer(repo))
+
+	log.Println("Auth service gRPC starting on :50051")
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("gRPC server failed: %v", err)
 	}
 }

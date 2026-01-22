@@ -6,12 +6,15 @@ import (
 	"microservices/pkg/bank"
 	"microservices/pkg/database"
 	"microservices/pkg/jsonutil"
+	pb "microservices/proto/ledger"
 	"net/http"
 	"os"
 
 	"context"
 
 	"github.com/redis/go-redis/v9"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -58,10 +61,24 @@ func main() {
 	// Initialize dependencies
 	repo := payment.NewRepository(db)
 	bankClient := bank.NewMockClient()
+
+	// Setup Ledger Service gRPC Client
+	ledgerGRPCAddr := os.Getenv("LEDGER_GRPC_ADDR")
+	if ledgerGRPCAddr == "" {
+		ledgerGRPCAddr = "localhost:50052"
+	}
+	conn, err := grpc.Dial(ledgerGRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect to ledger gRPC: %v", err)
+	}
+	defer conn.Close()
+	ledgerClient := pb.NewLedgerServiceClient(conn)
+
 	handler := &PaymentHandler{
-		repo:       repo,
-		bankClient: bankClient,
-		rdb:        rdb,
+		repo:         repo,
+		bankClient:   bankClient,
+		rdb:          rdb,
+		ledgerClient: ledgerClient,
 	}
 
 	mux := http.NewServeMux()

@@ -5,8 +5,12 @@ import (
 	"microservices/internal/ledger"
 	"microservices/pkg/database"
 	"microservices/pkg/jsonutil"
+	pb "microservices/proto/ledger"
+	"net"
 	"net/http"
 	"os"
+
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -62,8 +66,23 @@ func main() {
 
 	mux.HandleFunc("/transactions", handler.RecordTransaction)
 
-	log.Println("Ledger service starting on :8083")
-	if err := http.ListenAndServe(":8083", mux); err != nil {
-		log.Fatalf("Server failed: %v", err)
+	log.Println("Ledger service HTTP starting on :8083")
+	go func() {
+		if err := http.ListenAndServe(":8083", mux); err != nil {
+			log.Fatalf("HTTP server failed: %v", err)
+		}
+	}()
+
+	// Start gRPC Server
+	lis, err := net.Listen("tcp", ":50052")
+	if err != nil {
+		log.Fatalf("failed to listen for gRPC: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterLedgerServiceServer(s, NewLedgerGRPCServer(repo))
+
+	log.Println("Ledger service gRPC starting on :50052")
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("gRPC server failed: %v", err)
 	}
 }
