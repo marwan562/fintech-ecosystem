@@ -248,11 +248,18 @@ func (h *PaymentHandler) ConfirmPaymentIntent(w http.ResponseWriter, r *http.Req
 	intent.Status = "succeeded"
 
 	// Queue notification to RabbitMQ (Email/SMS)
-	notif := map[string]string{
-		"type":    "email",
-		"to":      "user_" + intent.UserID + "@example.com",
-		"subject": "Payment Succeeded!",
-		"body":    "Your payment of " + fmt.Sprintf("%d", intent.Amount) + " " + intent.Currency + " was successful.",
+	notif := map[string]interface{}{
+		"user_id":     intent.UserID,
+		"recipient":   "user_" + intent.UserID + "@example.com",
+		"channel":     "email",
+		"template_id": "payment_success",
+		"data": map[string]string{
+			"UserName":      "User " + intent.UserID,
+			"Amount":        fmt.Sprintf("%d", intent.Amount),
+			"Currency":      intent.Currency,
+			"TransactionID": intent.ID,
+			"Title":         "Payment Succeeded!",
+		},
 	}
 	notifBody, _ := json.Marshal(notif)
 	if err := h.rabbitClient.Publish(r.Context(), "notifications", notifBody); err != nil {
