@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/marwan562/fintech-ecosystem/internal/notification"
 	"github.com/marwan562/fintech-ecosystem/pkg/database"
@@ -54,7 +55,13 @@ func main() {
 	}
 
 	// Initialize RabbitMQ client
-	rabbitClient, err := messaging.NewRabbitMQClient(rabbitURL)
+	rabbitClient, err := messaging.NewRabbitMQClient(messaging.Config{
+		URL:                   rabbitURL,
+		ReconnectDelay:        time.Second,
+		MaxReconnectDelay:     time.Minute,
+		MaxRetries:            -1, // infinite retries
+		CircuitBreakerEnabled: true,
+	})
 	if err != nil {
 		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
 	}

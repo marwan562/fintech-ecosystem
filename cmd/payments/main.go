@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/marwan562/fintech-ecosystem/internal/payment"
 	"github.com/marwan562/fintech-ecosystem/pkg/bank"
@@ -92,7 +93,13 @@ func main() {
 	if rabbitURL == "" {
 		rabbitURL = "amqp://user:password@localhost:5672/"
 	}
-	rabbitClient, err := messaging.NewRabbitMQClient(rabbitURL)
+	rabbitClient, err := messaging.NewRabbitMQClient(messaging.Config{
+		URL:                   rabbitURL,
+		ReconnectDelay:        time.Second,
+		MaxReconnectDelay:     time.Minute,
+		MaxRetries:            -1, // infinite retries
+		CircuitBreakerEnabled: true,
+	})
 	if err != nil {
 		log.Printf("Warning: Failed to connect to RabbitMQ: %v", err)
 	} else {

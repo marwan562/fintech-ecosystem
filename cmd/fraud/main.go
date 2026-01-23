@@ -80,7 +80,13 @@ func main() {
 	if rabbitURL == "" {
 		rabbitURL = "amqp://user:password@localhost:5672/"
 	}
-	rabbitClient, _ := messaging.NewRabbitMQClient(rabbitURL)
+	rabbitClient, _ := messaging.NewRabbitMQClient(messaging.Config{
+		URL:                   rabbitURL,
+		ReconnectDelay:        time.Second,
+		MaxReconnectDelay:     time.Minute,
+		MaxRetries:            -1,
+		CircuitBreakerEnabled: true,
+	})
 	if rabbitClient != nil {
 		defer rabbitClient.Close()
 		rabbitClient.DeclareQueue("risk_alerts")
