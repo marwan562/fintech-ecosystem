@@ -42,6 +42,37 @@ func (r *RabbitMQClient) DeclareQueue(name string) (amqp.Queue, error) {
 	)
 }
 
+// DeclareQueueWithDLQ declares a queue with dead letter queue support
+func (r *RabbitMQClient) DeclareQueueWithDLQ(name string) (amqp.Queue, error) {
+	dlqName := name + ".dlq"
+
+	// Declare the DLQ first
+	_, err := r.channel.QueueDeclare(
+		dlqName,
+		true,  // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		nil,   // arguments
+	)
+	if err != nil {
+		return amqp.Queue{}, fmt.Errorf("failed to declare DLQ: %w", err)
+	}
+
+	// Declare the main queue with DLQ routing
+	return r.channel.QueueDeclare(
+		name,
+		true,  // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		amqp.Table{
+			"x-dead-letter-exchange":    "",
+			"x-dead-letter-routing-key": dlqName,
+		},
+	)
+}
+
 func (r *RabbitMQClient) Publish(ctx context.Context, queueName string, body []byte) error {
 	return r.channel.PublishWithContext(ctx,
 		"",        // exchange

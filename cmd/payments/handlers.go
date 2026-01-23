@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -216,7 +215,7 @@ func (h *PaymentHandler) ConfirmPaymentIntent(w http.ResponseWriter, r *http.Req
 	}
 	payment.PaymentRequests.WithLabelValues("confirm", "success").Inc()
 
-	// Publish Webhook Event
+	// Publish Webhook Event to Redis (for CLI listen feature)
 	event := map[string]interface{}{
 		"type": "payment.succeeded",
 		"data": intent,
@@ -224,8 +223,23 @@ func (h *PaymentHandler) ConfirmPaymentIntent(w http.ResponseWriter, r *http.Req
 	eventBody, _ := json.Marshal(event)
 	h.rdb.Publish(r.Context(), "webhook_events", eventBody)
 
-	// Emit to Kafka for persistent audit trail
-	if err := h.kafkaProducer.Publish(r.Context(), intent.ID, eventBody); err != nil {
+	// Publish structured event to Kafka (source of truth)
+	// The Notification Service will consume this and route to appropriate channels
+	kafkaEvent := map[string]interface{}{
+		"id":        "evt_" + intent.ID,
+		"type":      "payment.succeeded",
+		"timestamp": intent.CreatedAt,
+		"data": map[string]interface{}{
+			"payment_id":  intent.ID,
+			"user_id":     intent.UserID,
+			"amount":      intent.Amount,
+			"currency":    intent.Currency,
+			"description": intent.Description,
+			"status":      "succeeded",
+		},
+	}
+	kafkaEventBody, _ := json.Marshal(kafkaEvent)
+	if err := h.kafkaProducer.Publish(r.Context(), intent.ID, kafkaEventBody); err != nil {
 		log.Printf("Failed to publish event to Kafka: %v", err)
 		// We still proceed, but Kafka failure should be alerted in production
 	}
@@ -247,24 +261,9 @@ func (h *PaymentHandler) ConfirmPaymentIntent(w http.ResponseWriter, r *http.Req
 
 	intent.Status = "succeeded"
 
-	// Queue notification to RabbitMQ (Email/SMS)
-	notif := map[string]interface{}{
-		"user_id":     intent.UserID,
-		"recipient":   "user_" + intent.UserID + "@example.com",
-		"channel":     "email",
-		"template_id": "payment_success",
-		"data": map[string]string{
-			"UserName":      "User " + intent.UserID,
-			"Amount":        fmt.Sprintf("%d", intent.Amount),
-			"Currency":      intent.Currency,
-			"TransactionID": intent.ID,
-			"Title":         "Payment Succeeded!",
-		},
-	}
-	notifBody, _ := json.Marshal(notif)
-	if err := h.rabbitClient.Publish(r.Context(), "notifications", notifBody); err != nil {
-		log.Printf("Failed to queue notification: %v", err)
-	}
+	// NOTE: Notifications are now handled by the Notification Service
+	// which consumes payment.succeeded events from Kafka and routes to
+	// appropriate channels (email, SMS, webhook) via RabbitMQ workers.
 
 	jsonutil.WriteJSON(w, http.StatusOK, intent)
 }
@@ -303,14 +302,23 @@ func (h *PaymentHandler) RefundPaymentIntent(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	// Emit to Kafka
-	event := map[string]interface{}{
-		"type": "payment.refunded",
-		"data": intent,
+	// Publish structured event to Kafka (Notification Service will consume this)
+	kafkaEvent := map[string]interface{}{
+		"id":        "evt_refund_" + intent.ID,
+		"type":      "refund.completed",
+		"timestamp": intent.CreatedAt,
+		"data": map[string]interface{}{
+			"refund_id":  "ref_" + intent.ID,
+			"payment_id": intent.ID,
+			"user_id":    intent.UserID,
+			"amount":     intent.Amount,
+			"currency":   intent.Currency,
+			"status":     "completed",
+		},
 	}
-	eventBody, _ := json.Marshal(event)
-	if err := h.kafkaProducer.Publish(r.Context(), intent.ID, eventBody); err != nil {
-		log.Printf("Failed to publish refund event: %v", err)
+	kafkaEventBody, _ := json.Marshal(kafkaEvent)
+	if err := h.kafkaProducer.Publish(r.Context(), intent.ID, kafkaEventBody); err != nil {
+		log.Printf("Failed to publish refund event to Kafka: %v", err)
 	}
 
 	payment.PaymentRequests.WithLabelValues("refund", "success").Inc()
