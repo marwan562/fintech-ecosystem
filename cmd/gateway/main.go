@@ -13,6 +13,7 @@ import (
 
 	"github.com/marwan562/fintech-ecosystem/pkg/apikey"
 	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+	"github.com/marwan562/fintech-ecosystem/pkg/observability"
 
 	pb "github.com/marwan562/fintech-ecosystem/proto/auth"
 
@@ -264,14 +265,30 @@ func main() {
 	defer conn.Close()
 	authClient := pb.NewAuthServiceClient(conn)
 
+	// Initialize Tracer
+	shutdown, err := observability.InitTracer(context.Background(), observability.Config{
+		ServiceName:    "gateway",
+		ServiceVersion: "0.1.0",
+		Endpoint:       os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
+		Environment:    "production",
+	})
+	if err != nil {
+		log.Printf("Failed to init tracer: %v", err)
+	} else {
+		defer shutdown(context.Background())
+	}
+
 	// Start Metrics Server
 	monitoring.StartMetricsServer(":8087")
 
 	gateway := NewGatewayHandler(authURL, paymentURL, ledgerURL, rdb, authClient)
 
+	// Wrap handler with OpenTelemetry
+	otelHandler := otelhttp.NewHandler(gateway, "gateway-request")
+
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: gateway,
+		Handler: otelHandler,
 	}
 
 	log.Println("Gateway service starting on :8080")

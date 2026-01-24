@@ -19,6 +19,14 @@ kubectl wait --namespace fintech-ecosystem \
   --selector=app=redis \
   --timeout=90s
 
+echo "🔎 Deploying Observability (Jaeger)..."
+kubectl apply -f observability.yaml
+
+kubectl wait --namespace fintech-ecosystem \
+  --for=condition=ready pod \
+  --selector=app=jaeger \
+  --timeout=90s
+
 echo "🦄 Deploying Services..."
 kubectl apply -f auth.yaml
 kubectl apply -f payments.yaml

@@ -13,9 +13,13 @@ import (
 	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
 	"github.com/marwan562/fintech-ecosystem/pkg/messaging"
 	"github.com/marwan562/fintech-ecosystem/pkg/monitoring"
+	"github.com/marwan562/fintech-ecosystem/pkg/observability"
 	pb "github.com/marwan562/fintech-ecosystem/proto/ledger"
 
 	"context"
+
+	// NEW
+	// NEW
 
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
@@ -107,6 +111,19 @@ func main() {
 		rabbitClient.DeclareQueue("notifications")
 	}
 
+	// Initialize Tracer
+	shutdown, err := observability.InitTracer(context.Background(), observability.Config{
+		ServiceName:    "payments",
+		ServiceVersion: "0.1.0",
+		Endpoint:       os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
+		Environment:    "production",
+	})
+	if err != nil {
+		log.Printf("Failed to init tracer: %v", err)
+	} else {
+		defer shutdown(context.Background())
+	}
+
 	// Start Metrics Server
 	monitoring.StartMetricsServer(":8086") // Distinct from HTTP server on 8082 if preferred, but on separate port is standard
 
@@ -156,7 +173,11 @@ func main() {
 	})
 
 	log.Println("Payments service starting on :8082")
-	if err := http.ListenAndServe(":8082", mux); err != nil {
+
+	// Wrap handler with OpenTelemetry
+	otelHandler := otelhttp.NewHandler(mux, "payments-request")
+
+	if err := http.ListenAndServe(":8082", otelHandler); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }

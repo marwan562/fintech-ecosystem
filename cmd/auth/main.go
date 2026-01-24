@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net"
 	"net/http"
@@ -9,7 +10,9 @@ import (
 	"github.com/marwan562/fintech-ecosystem/internal/auth"
 	"github.com/marwan562/fintech-ecosystem/pkg/database"
 	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+	"github.com/marwan562/fintech-ecosystem/pkg/observability" // NEW
 	pb "github.com/marwan562/fintech-ecosystem/proto/auth"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp" // NEW
 
 	"github.com/marwan562/fintech-ecosystem/pkg/monitoring"
 	"google.golang.org/grpc"
@@ -47,6 +50,19 @@ func main() {
 	repo := auth.NewRepository(db)
 	handler := &AuthHandler{repo: repo}
 
+	// Initialize Tracer
+	shutdown, err := observability.InitTracer(context.Background(), observability.Config{
+		ServiceName:    "auth",
+		ServiceVersion: "0.1.0",
+		Endpoint:       os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
+		Environment:    "production",
+	})
+	if err != nil {
+		log.Printf("Failed to init tracer: %v", err)
+	} else {
+		defer shutdown(context.Background())
+	}
+
 	// Start Metrics Server
 	monitoring.StartMetricsServer(":8085")
 
@@ -72,8 +88,12 @@ func main() {
 	mux.HandleFunc("/validate_key", handler.ValidateAPIKey)
 
 	log.Println("Auth service HTTP starting on :8081")
+
+	// Wrap handler with OpenTelemetry
+	otelHandler := otelhttp.NewHandler(mux, "auth-request")
+
 	go func() {
-		if err := http.ListenAndServe(":8081", mux); err != nil {
+		if err := http.ListenAndServe(":8081", otelHandler); err != nil {
 			log.Fatalf("HTTP server failed: %v", err)
 		}
 	}()

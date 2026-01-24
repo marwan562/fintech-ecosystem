@@ -27,9 +27,9 @@ To provide a developer-first, scalable, and open-source financial infrastructure
     - [x] K8s manifests for all microservices (`deploy/k8s`).
     - [ ] Helm Charts for "one-click" deployment.
 - [ ] **Observability Stack**:
-    - Distributed Tracing (OpenTelemetry + Jaeger/Tempo).
-    - Centralized Metrics (Prometheus + Grafana Dashboards).
-    - Structured Logging (ELK/Loki).
+    - [x] Distributed Tracing (OpenTelemetry + Jaeger/Tempo).
+    - [ ] Centralized Metrics (Prometheus + Grafana Dashboards).
+    - [ ] Structured Logging (ELK/Loki).
 - [ ] **Database Engineering**:
     - Automated schema migrations (`golang-migrate`).
     - Connection pooling tuning.

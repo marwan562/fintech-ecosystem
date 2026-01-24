@@ -12,7 +12,9 @@ import (
 	"github.com/marwan562/fintech-ecosystem/internal/ledger"
 	"github.com/marwan562/fintech-ecosystem/pkg/database"
 	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
+	"github.com/marwan562/fintech-ecosystem/pkg/observability" // NEW
 	pb "github.com/marwan562/fintech-ecosystem/proto/ledger"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp" // NEW
 
 	"github.com/marwan562/fintech-ecosystem/pkg/messaging"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -48,6 +50,19 @@ func main() {
 	}
 
 	repo := ledger.NewRepository(db)
+
+	// Initialize Tracer
+	shutdown, err := observability.InitTracer(context.Background(), observability.Config{
+		ServiceName:    "ledger",
+		ServiceVersion: "0.1.0",
+		Endpoint:       os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT"),
+		Environment:    "production",
+	})
+	if err != nil {
+		log.Printf("Failed to init tracer: %v", err)
+	} else {
+		defer shutdown(context.Background())
+	}
 
 	// Start Kafka Consumer for Event Sourcing
 	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
@@ -89,8 +104,12 @@ func main() {
 	mux.HandleFunc("/transactions", handler.RecordTransaction)
 
 	log.Println("Ledger service HTTP starting on :8083")
+
+	// Wrap handler with OpenTelemetry
+	otelHandler := otelhttp.NewHandler(mux, "ledger-request")
+
 	go func() {
-		if err := http.ListenAndServe(":8083", mux); err != nil {
+		if err := http.ListenAndServe(":8083", otelHandler); err != nil {
 			log.Fatalf("HTTP server failed: %v", err)
 		}
 	}()
