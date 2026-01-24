@@ -81,7 +81,9 @@ var loginCmd = &cobra.Command{
 		// Save to config
 		viper.Set("api_key", keyResp.Key)
 		viper.Set("email", email)
-		viper.WriteConfig()
+		if err := viper.WriteConfig(); err != nil {
+			fmt.Printf("Warning: failed to write config: %v\n", err)
+		}
 
 		fmt.Println("Successfully logged in!")
 		fmt.Printf("API Key stored: %s...%s\n", keyResp.Key[:7], keyResp.Key[len(keyResp.Key)-4:])

@@ -74,7 +74,7 @@ func main() {
 	if ledgerGRPCAddr == "" {
 		ledgerGRPCAddr = "localhost:50052"
 	}
-	conn, err := grpc.Dial(ledgerGRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(ledgerGRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect to ledger gRPC: %v", err)
 	}
@@ -106,7 +106,9 @@ func main() {
 		log.Printf("Warning: Failed to connect to RabbitMQ: %v", err)
 	} else {
 		defer rabbitClient.Close()
-		rabbitClient.DeclareQueue("notifications")
+		if err := rabbitClient.DeclareQueue("notifications"); err != nil {
+			log.Printf("Failed to declare queue: %v", err)
+		}
 	}
 
 	// Initialize Tracer

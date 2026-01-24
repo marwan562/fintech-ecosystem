@@ -259,7 +259,7 @@ func main() {
 	if authGRPCAddr == "" {
 		authGRPCAddr = "localhost:50051"
 	}
-	conn, err := grpc.Dial(authGRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(authGRPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect to auth gRPC: %v", err)
 	}

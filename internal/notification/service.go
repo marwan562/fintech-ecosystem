@@ -55,7 +55,9 @@ func (s *Service) Send(ctx context.Context, req *NotificationRequest) (*Notifica
 	if err != nil {
 		log.Printf("No driver for channel %s: %v", req.Channel, err)
 		if s.repo != nil {
-			s.repo.UpdateStatus(ctx, notif.ID, StatusFailed)
+			if err := s.repo.UpdateStatus(ctx, notif.ID, StatusFailed); err != nil {
+				log.Printf("Failed to update status: %v", err)
+			}
 		}
 		return notif, err
 	}
@@ -64,7 +66,9 @@ func (s *Service) Send(ctx context.Context, req *NotificationRequest) (*Notifica
 	if err := driver.Send(ctx, req.Recipient, title, content); err != nil {
 		log.Printf("Failed to send notification via %s: %v", req.Channel, err)
 		if s.repo != nil {
-			s.repo.UpdateStatus(ctx, notif.ID, StatusFailed)
+			if err := s.repo.UpdateStatus(ctx, notif.ID, StatusFailed); err != nil {
+				log.Printf("Failed to update status: %v", err)
+			}
 		}
 		notif.Status = StatusFailed
 		return notif, err
@@ -72,7 +76,9 @@ func (s *Service) Send(ctx context.Context, req *NotificationRequest) (*Notifica
 
 	// Update status to sent
 	if s.repo != nil {
-		s.repo.UpdateStatus(ctx, notif.ID, StatusSent)
+		if err := s.repo.UpdateStatus(ctx, notif.ID, StatusSent); err != nil {
+			log.Printf("Failed to update status: %v", err)
+		}
 	}
 	notif.Status = StatusSent
 
@@ -102,7 +108,9 @@ func (s *Service) SendSimple(ctx context.Context, userID, recipient string, chan
 	if err != nil {
 		log.Printf("No driver for channel %s: %v", channel, err)
 		if s.repo != nil {
-			s.repo.UpdateStatus(ctx, notif.ID, StatusFailed)
+			if err := s.repo.UpdateStatus(ctx, notif.ID, StatusFailed); err != nil {
+				log.Printf("Failed to update status: %v", err)
+			}
 		}
 		return notif, err
 	}
@@ -111,7 +119,9 @@ func (s *Service) SendSimple(ctx context.Context, userID, recipient string, chan
 	if err := driver.Send(ctx, recipient, title, content); err != nil {
 		log.Printf("Failed to send notification: %v", err)
 		if s.repo != nil {
-			s.repo.UpdateStatus(ctx, notif.ID, StatusFailed)
+			if err := s.repo.UpdateStatus(ctx, notif.ID, StatusFailed); err != nil {
+				log.Printf("Failed to update status: %v", err)
+			}
 		}
 		notif.Status = StatusFailed
 		return notif, err
@@ -119,7 +129,9 @@ func (s *Service) SendSimple(ctx context.Context, userID, recipient string, chan
 
 	// Update status to sent
 	if s.repo != nil {
-		s.repo.UpdateStatus(ctx, notif.ID, StatusSent)
+		if err := s.repo.UpdateStatus(ctx, notif.ID, StatusSent); err != nil {
+			log.Printf("Failed to update status: %v", err)
+		}
 	}
 	notif.Status = StatusSent
 

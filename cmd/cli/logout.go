@@ -13,7 +13,9 @@ var logoutCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		viper.Set("api_key", "")
 		viper.Set("email", "")
-		viper.WriteConfig()
+		if err := viper.WriteConfig(); err != nil {
+			fmt.Printf("Warning: failed to write config: %v\n", err)
+		}
 		fmt.Println("Successfully logged out.")
 	},
 }

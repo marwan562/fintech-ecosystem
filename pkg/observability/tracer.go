@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -43,12 +42,9 @@ func InitTracer(ctx context.Context, cfg Config) (func(context.Context) error, e
 	// If Endpoint is empty, we could fall back to stdout or no-op, but for now we'll require it or error
 	var exporter sdktrace.SpanExporter
 	if cfg.Endpoint != "" {
-		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-		defer cancel()
-
-		conn, err := grpc.DialContext(ctx, cfg.Endpoint,
+		// NewClient creates the client connection. It does not block by default.
+		conn, err := grpc.NewClient(cfg.Endpoint,
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
-			grpc.WithBlock(),
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create gRPC connection to collector: %w", err)

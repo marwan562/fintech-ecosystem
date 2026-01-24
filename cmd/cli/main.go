@@ -43,7 +43,12 @@ func initConfig() {
 		// Create config file if it doesn't exist
 		configPath := filepath.Join(home, ".micro.yaml")
 		if _, err := os.Stat(configPath); os.IsNotExist(err) {
-			os.Create(configPath)
+			f, err := os.Create(configPath)
+			if err != nil {
+				fmt.Printf("Warning: failed to create config file: %v\n", err)
+			} else {
+				f.Close()
+			}
 		}
 	}
 

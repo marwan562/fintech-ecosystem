@@ -363,9 +363,13 @@ func (r *RabbitMQClient) ConsumeWithContext(ctx context.Context, queueName strin
 				}
 				if err := handler(d.Body); err != nil {
 					log.Printf("error handling message: %v", err)
-					d.Nack(false, true) // Requeue
+					if nackErr := d.Nack(false, true); nackErr != nil {
+						log.Printf("failed to nack message: %v", nackErr)
+					}
 				} else {
-					d.Ack(false)
+					if ackErr := d.Ack(false); ackErr != nil {
+						log.Printf("failed to ack message: %v", ackErr)
+					}
 				}
 			}
 		}
