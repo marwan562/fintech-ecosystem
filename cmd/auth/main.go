@@ -51,8 +51,14 @@ func main() {
 		}()
 	}
 
+	hmacSecret := os.Getenv("API_KEY_HMAC_SECRET")
+	if hmacSecret == "" {
+		hmacSecret = "local-dev-secret-do-not-use-in-prod"
+		log.Println("Warning: API_KEY_HMAC_SECRET not set, using default for dev")
+	}
+
 	repo := auth.NewRepository(db)
-	handler := &AuthHandler{repo: repo}
+	handler := &AuthHandler{repo: repo, hmacSecret: hmacSecret}
 
 	// Initialize Tracer
 	shutdown, err := observability.InitTracer(context.Background(), observability.Config{

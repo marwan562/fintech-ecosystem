@@ -42,10 +42,11 @@ type GatewayHandler struct {
 	rdb               *redis.Client
 	upgrader          websocket.Upgrader
 	authClient        pb.AuthServiceClient
+	hmacSecret        string
 }
 
 // NewGatewayHandler creates a new instance of GatewayHandler.
-func NewGatewayHandler(auth, payment, ledger string, rdb *redis.Client, authClient pb.AuthServiceClient) *GatewayHandler {
+func NewGatewayHandler(auth, payment, ledger string, rdb *redis.Client, authClient pb.AuthServiceClient, hmacSecret string) *GatewayHandler {
 	return &GatewayHandler{
 		authServiceURL:    auth,
 		paymentServiceURL: payment,
@@ -55,6 +56,7 @@ func NewGatewayHandler(auth, payment, ledger string, rdb *redis.Client, authClie
 			CheckOrigin: func(r *http.Request) bool { return true },
 		},
 		authClient: authClient,
+		hmacSecret: hmacSecret,
 	}
 }
 
@@ -142,7 +144,7 @@ func (h *GatewayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	apiKey := strings.TrimPrefix(authHeader, "Bearer ")
 
 	// Hash Key
-	keyHash := apikey.HashKey(apiKey)
+	keyHash := apikey.HashKey(apiKey, h.hmacSecret)
 
 	// Validate with Auth Service
 	userID, env, valid := h.validateKeyWithAuthService(r.Context(), keyHash)
@@ -298,7 +300,14 @@ func main() {
 	// Start Metrics Server
 	monitoring.StartMetricsServer(":8087")
 
-	gateway := NewGatewayHandler(authURL, paymentURL, ledgerURL, rdb, authClient)
+	// HMAC Secret
+	hmacSecret := os.Getenv("API_KEY_HMAC_SECRET")
+	if hmacSecret == "" {
+		hmacSecret = "local-dev-secret-do-not-use-in-prod"
+		log.Println("Warning: API_KEY_HMAC_SECRET not set, using default for dev")
+	}
+
+	gateway := NewGatewayHandler(authURL, paymentURL, ledgerURL, rdb, authClient, hmacSecret)
 
 	// Wrap handler with OpenTelemetry
 	otelHandler := otelhttp.NewHandler(gateway, "gateway-request")

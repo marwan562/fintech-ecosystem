@@ -100,6 +100,7 @@ services:
     container_name: microservices_auth
     environment:
       - DB_DSN=postgres://user:password@postgres:5432/microservices?sslmode=disable
+      - API_KEY_HMAC_SECRET=super-secret-pepper-change-me-in-prod
     ports:
       - "8081:8081"
     depends_on:
@@ -153,6 +154,7 @@ services:
       - AUTH_SERVICE_URL=http://auth:8081
       - PAYMENT_SERVICE_URL=http://payments:8082
       - LEDGER_SERVICE_URL=http://ledger:8083
+      - API_KEY_HMAC_SECRET=super-secret-pepper-change-me-in-prod
     ports:
       - "8080:8080"
     depends_on:

@@ -15,10 +15,10 @@ To provide a developer-first, scalable, and open-source financial infrastructure
     - [x] Automated Linting (`golangci-lint`)
     - [x] Unit & Integration Tests
     - [x] Docker Image Building
-- [ ] **Security Hardening**:
-    - Dependency scanning (Dependabot)
-    - Secret scanning in CI
-    - API Key hashing improvements
+- [x] **Security Hardening**:
+    - [x] Dependency scanning (Dependabot)
+    - [x] Secret scanning in CI
+    - [x] API Key hashing improvements
 
 ## Phase 2: Hyper-Scale Infrastructure (Q2)
 *Focus: Reliability, Observability, and Performance.*

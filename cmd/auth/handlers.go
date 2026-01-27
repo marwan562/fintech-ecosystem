@@ -58,7 +58,7 @@ func (h *AuthHandler) GenerateAPIKey(w http.ResponseWriter, r *http.Request) {
 	}
 
 	prefix := "sk_" + req.Environment
-	fullKey, hash, err := apikey.GenerateKey(prefix)
+	fullKey, hash, err := apikey.GenerateKey(prefix, h.hmacSecret)
 	if err != nil {
 		jsonutil.WriteErrorJSON(w, "Failed to generate key")
 		return
@@ -128,7 +128,8 @@ func (h *AuthHandler) ValidateAPIKey(w http.ResponseWriter, r *http.Request) {
 
 // AuthHandler holds dependencies for authentication endpoints.
 type AuthHandler struct {
-	repo *auth.Repository
+	repo       *auth.Repository
+	hmacSecret string
 }
 
 // RegisterRequest defines the payload for user registration.
