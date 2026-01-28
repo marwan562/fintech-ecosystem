@@ -96,6 +96,7 @@ type ValidateAPIKeyResponse struct {
 	Valid       bool   `json:"valid"`
 	UserID      string `json:"user_id"`
 	Environment string `json:"environment"`
+	Scopes      string `json:"scopes"`
 }
 
 func (h *AuthHandler) ValidateAPIKey(w http.ResponseWriter, r *http.Request) {
@@ -124,6 +125,7 @@ func (h *AuthHandler) ValidateAPIKey(w http.ResponseWriter, r *http.Request) {
 		Valid:       true,
 		UserID:      key.UserID,
 		Environment: key.Environment,
+		Scopes:      key.Scopes,
 	})
 }
 

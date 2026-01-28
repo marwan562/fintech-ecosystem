@@ -7,13 +7,12 @@
 package auth
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -261,11 +260,12 @@ const file_proto_auth_auth_proto_rawDesc = "" +
 	"\n" +
 	"\x15proto/auth/auth.proto\x12\x04auth\x1a\x1cgoogle/api/annotations.proto\"/\n" +
 	"\x12ValidateKeyRequest\x12\x19\n" +
-	"\bkey_hash\x18\x01 \x01(\tR\akeyHash\"f\n" +
+	"\bkey_hash\x18\x01 \x01(\tR\akeyHash\"~\n" +
 	"\x13ValidateKeyResponse\x12\x14\n" +
 	"\x05valid\x18\x01 \x01(\bR\x05valid\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\tR\x06userId\x12 \n" +
-	"\venvironment\x18\x03 \x01(\tR\venvironment\"9\n" +
+	"\venvironment\x18\x03 \x01(\tR\venvironment\x12\x16\n" +
+	"\x06scopes\x18\x04 \x01(\tR\x06scopes\"9\n" +
 	"\x14ValidateTokenRequest\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\"\x98\x01\n" +
 	"\x15ValidateTokenResponse\x12\x14\n" +
