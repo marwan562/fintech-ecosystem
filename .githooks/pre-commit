@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Pre-commit hook to ensure code quality
+# Run from the root of the repository
+
+echo "🔍 Running pre-commit checks..."
+
+# 1. Format code
+echo "🎨 Formatting code..."
+make fmt
+if [ $? -ne 0 ]; then
+    echo "❌ Formatting failed. Please check your code."
+    exit 1
+fi
+
+# 2. Run linting
+echo "🛡️  Running golangci-lint..."
+make lint
+if [ $? -ne 0 ]; then
+    echo "❌ Linting failed. Please fix the issues before committing."
+    exit 1
+fi
+
+# 3. Run aggressive tests
+echo "🧪 Running aggressive tests (race detector + no cache)..."
+make test-aggressive
+if [ $? -ne 0 ]; then
+    echo "❌ Tests failed. Commitment aborted."
+    exit 1
+fi
+
+echo "✅ All checks passed! Ready to commit."
+exit 0
