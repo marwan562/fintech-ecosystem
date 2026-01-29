@@ -51,7 +51,7 @@ func (r *Repository) GetAuditLogs(ctx context.Context, orgID string, limit, offs
 	if err != nil {
 		return nil, 0, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var logs []AuditLog
 	for rows.Next() {

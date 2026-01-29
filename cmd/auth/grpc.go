@@ -127,11 +127,12 @@ func (s *AuthGRPCServer) InitiateSSO(ctx context.Context, req *pb.InitiateSSOReq
 	}
 
 	var authURL string
-	if provider.ProviderType == "oidc" {
+	switch provider.ProviderType {
+	case "oidc":
 		// Basic OIDC initiation URL
 		authURL = fmt.Sprintf("%s?client_id=%s&redirect_uri=%s&response_type=code&scope=openid email profile&state=sso_%s",
 			provider.IssuerURL, provider.ClientID, req.RedirectUri, provider.ID)
-	} else if provider.ProviderType == "saml" {
+	case "saml":
 		// Basic SAML/Redirect binding initiation placeholder
 		authURL = fmt.Sprintf("%s?SAMLRequest=...", provider.SSOURL)
 	}

@@ -48,7 +48,7 @@ func (r *Repository) ListOrgMembers(ctx context.Context, orgID string) ([]Member
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var memberships []Membership
 	for rows.Next() {
