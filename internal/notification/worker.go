@@ -1,11 +1,16 @@
 package notification
 
 import (
+	"bytes"
 	"context"
+	"crypto/hmac"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
 	"math"
+	"net/http"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -92,15 +97,17 @@ func (w *Worker) handleRetry(ctx context.Context, task *NotificationTask, origin
 
 // WebhookWorker processes webhook delivery tasks
 type WebhookWorker struct {
-	redis    *redis.Client
-	maxRetry int
+	redis      *redis.Client
+	maxRetry   int
+	httpClient *http.Client
 }
 
 // NewWebhookWorker creates a new webhook worker
 func NewWebhookWorker(redisClient *redis.Client) *WebhookWorker {
 	return &WebhookWorker{
-		redis:    redisClient,
-		maxRetry: 5,
+		redis:      redisClient,
+		maxRetry:   5,
+		httpClient: &http.Client{Timeout: 10 * time.Second},
 	}
 }
 
@@ -132,33 +139,79 @@ func (w *WebhookWorker) ProcessWebhook(ctx context.Context, body []byte) error {
 	// Create HMAC signature
 	signature := createHMAC(task.Payload, task.Secret)
 
-	// Deliver webhook (mock for now)
-	log.Printf("[WEBHOOK] Delivering to %s", task.URL)
-	log.Printf("[WEBHOOK] Event: %s", task.EventType)
-	log.Printf("[WEBHOOK] Signature: %s", signature)
-	log.Printf("[WEBHOOK] Payload: %s", string(task.Payload))
-
-	// In production, this would be an HTTP POST with:
-	// - X-Webhook-Signature header
-	// - Event type header
-	// - Timestamp header
-	// - JSON payload
-
-	// Mark as delivered
-	if w.redis != nil {
-		w.redis.Set(ctx, fmt.Sprintf("webhook:sent:%s", task.ID), "1", 7*24*time.Hour)
+	// Prepare request
+	req, err := http.NewRequestWithContext(ctx, "POST", task.URL, bytes.NewBuffer(task.Payload))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %w", err)
 	}
 
-	log.Printf("[WEBHOOK] Successfully delivered %s", task.ID)
-	return nil
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Webhook-Signature", signature)
+	req.Header.Set("X-Webhook-Event", string(task.EventType))
+	req.Header.Set("X-Webhook-ID", task.ID)
+	req.Header.Set("X-Webhook-Timestamp", time.Now().UTC().Format(time.RFC3339))
+
+	client := w.httpClient
+	if client == nil {
+		client = &http.Client{Timeout: 10 * time.Second}
+	}
+
+	// Retry loop
+	var lastErr error
+	for i := 0; i <= w.maxRetry; i++ {
+		if i > 0 {
+			// Exponential backoff: 1s, 2s, 4s, 8s, 16s
+			sleepDuration := time.Duration(math.Pow(2, float64(i-1))) * time.Second
+			log.Printf("Webhook %s retry %d/%d in %v...", task.ID, i, w.maxRetry, sleepDuration)
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-time.After(sleepDuration):
+			}
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			log.Printf("Webhook %s attempt %d failed: %v", task.ID, i+1, err)
+			lastErr = err
+			continue // Retry on network error
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+			// Success
+			log.Printf("[WEBHOOK] Successfully delivered %s to %s (Status: %d)", task.ID, task.URL, resp.StatusCode)
+
+			// Mark as delivered
+			if w.redis != nil {
+				w.redis.Set(ctx, fmt.Sprintf("webhook:sent:%s", task.ID), "1", 7*24*time.Hour)
+			}
+			return nil
+		}
+
+		// Handle HTTP errors
+		log.Printf("Webhook %s attempt %d returned status: %d", task.ID, i+1, resp.StatusCode)
+		lastErr = fmt.Errorf("server returned status: %d", resp.StatusCode)
+
+		// Don't retry on client errors (4xx) except maybe 429 (Too Many Requests) or 408 (Request Timeout)
+		// For simplicity/safety in this robust reliable delivery, we might only retry 5xx and network errors.
+		// However, standard practice often retries everything or specific codes.
+		// Use a simple heuristic: if 4xx (except 429), break.
+		if resp.StatusCode >= 400 && resp.StatusCode < 500 && resp.StatusCode != 429 {
+			log.Printf("Webhook %s failed with client error %d, not retrying", task.ID, resp.StatusCode)
+			return lastErr
+		}
+	}
+
+	return fmt.Errorf("failed to deliver webhook %s after %d retries: %w", task.ID, w.maxRetry, lastErr)
 }
 
 // createHMAC creates an HMAC signature for webhook verification
 func createHMAC(payload []byte, secret string) string {
-	// In production, use crypto/hmac with SHA256
-	// For now, just return a placeholder
 	if secret == "" {
-		return "unsigned"
+		return ""
 	}
-	return fmt.Sprintf("sha256=%x", "mock_signature")
+	h := hmac.New(sha256.New, []byte(secret))
+	h.Write(payload)
+	return hex.EncodeToString(h.Sum(nil))
 }

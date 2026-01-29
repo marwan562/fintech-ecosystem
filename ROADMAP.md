@@ -43,9 +43,9 @@ To provide a developer-first, scalable, and open-source financial infrastructure
 - [x] **Auth & Integration**:
     - [x] Upgrade Auth Service to support **OAuth2 / OIDC** (Client Credentials, Auth Code).
     - [x] Implement granular API Scopes (e.g., `payments:read`, `ledger:write`).
-- [ ] **Webhook Reliability**:
-    - [ ] Retry policies with exponential backoff.
-    - [ ] Webhook signing for security (HMAC).
+- [x] **Webhook Reliability**:
+    - [x] Retry policies with exponential backoff.
+    - [x] Webhook signing for security (HMAC).
 
 ## Phase 4: Ecosystem & Monetization (Q4)
 *Focus: Enabling a marketplace business model and Enterprise features.*
