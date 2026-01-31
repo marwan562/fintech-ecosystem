@@ -84,7 +84,7 @@ func (s *LedgerService) RecordTransaction(ctx context.Context, req TransactionRe
 	if err != nil {
 		return err
 	}
-	defer txCtx.Rollback()
+	defer func() { _ = txCtx.Rollback() }()
 
 	// 3. Check for existing transaction (Idempotency)
 	existingID, err := txCtx.CheckIdempotency(ctx, req.ReferenceID)

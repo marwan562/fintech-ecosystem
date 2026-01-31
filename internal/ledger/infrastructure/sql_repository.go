@@ -60,7 +60,7 @@ func (r *SQLRepository) GetUnprocessedEvents(ctx context.Context, limit int) ([]
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var events []domain.OutboxEvent
 	for rows.Next() {
