@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/marwan562/fintech-ecosystem/internal/ledger"
+	"github.com/marwan562/fintech-ecosystem/internal/ledger/domain"
 	"github.com/marwan562/fintech-ecosystem/pkg/messaging"
 )
 
@@ -19,7 +19,7 @@ type PaymentEvent struct {
 	} `json:"data"`
 }
 
-func StartKafkaConsumer(brokers []string, repo *ledger.Repository) {
+func StartKafkaConsumer(brokers []string, service *domain.LedgerService) {
 	consumer := messaging.NewKafkaConsumer(brokers, "payments", "ledger-group")
 
 	log.Println("Ledger Kafka Consumer started on topic 'payments'")
@@ -32,14 +32,14 @@ func StartKafkaConsumer(brokers []string, repo *ledger.Repository) {
 
 		log.Printf("Ledger: Received Kafka event type %s for ID %s", event.Type, event.Data.ID)
 
-		var txReq ledger.TransactionRequest
+		var txReq domain.TransactionRequest
 
 		switch event.Type {
 		case "payment.succeeded":
-			txReq = ledger.TransactionRequest{
+			txReq = domain.TransactionRequest{
 				ReferenceID: event.Data.ID,
 				Description: "Kafka Event: Payment Success",
-				Entries: []ledger.EntryRequest{
+				Entries: []domain.EntryRequest{
 					{
 						AccountID: "user_" + event.Data.UserID,
 						Amount:    event.Data.Amount,
@@ -54,10 +54,10 @@ func StartKafkaConsumer(brokers []string, repo *ledger.Repository) {
 			}
 		case "payment.refunded":
 			// Reversing entries
-			txReq = ledger.TransactionRequest{
+			txReq = domain.TransactionRequest{
 				ReferenceID: "refund_" + event.Data.ID,
 				Description: "Kafka Event: Payment Refunded",
-				Entries: []ledger.EntryRequest{
+				Entries: []domain.EntryRequest{
 					{
 						AccountID: "user_" + event.Data.UserID,
 						Amount:    -event.Data.Amount, // Negative credit is a debit
@@ -75,7 +75,7 @@ func StartKafkaConsumer(brokers []string, repo *ledger.Repository) {
 		}
 
 		ctx := context.Background()
-		if err := repo.RecordTransaction(ctx, txReq); err != nil {
+		if err := service.RecordTransaction(ctx, txReq); err != nil {
 			log.Printf("Failed to record transaction for event %s (ID: %s): %v", event.Type, event.Data.ID, err)
 			return err
 		}

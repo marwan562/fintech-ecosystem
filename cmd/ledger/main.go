@@ -9,12 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marwan562/fintech-ecosystem/internal/ledger"
+	"github.com/marwan562/fintech-ecosystem/internal/ledger/domain"
+	"github.com/marwan562/fintech-ecosystem/internal/ledger/infrastructure"
 	"github.com/marwan562/fintech-ecosystem/pkg/database"
 	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
-	"github.com/marwan562/fintech-ecosystem/pkg/observability" // NEW
+	"github.com/marwan562/fintech-ecosystem/pkg/observability"
 	pb "github.com/marwan562/fintech-ecosystem/proto/ledger"
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp" // NEW
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
 	"github.com/marwan562/fintech-ecosystem/pkg/messaging"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -46,7 +47,10 @@ func main() {
 		}()
 	}
 
-	repo := ledger.NewRepository(db)
+	// Layered Architecture Setup
+	repo := infrastructure.NewSQLRepository(db)
+	metrics := &infrastructure.PrometheusMetrics{}
+	service := domain.NewLedgerService(repo, metrics)
 
 	// Initialize Tracer
 	shutdown, err := observability.InitTracer(context.Background(), observability.Config{
@@ -71,14 +75,14 @@ func main() {
 		kafkaBrokers = "localhost:9092"
 	}
 	brokers := strings.Split(kafkaBrokers, ",")
-	go StartKafkaConsumer(brokers, repo)
+	go StartKafkaConsumer(brokers, service)
 
 	// Start Outbox Publisher for Reliable Event Delivery
 	ledgerProducer := messaging.NewKafkaProducer(brokers, "ledger-events")
-	publisher := ledger.NewOutboxPublisher(repo, ledgerProducer, 2*time.Second)
+	publisher := infrastructure.NewOutboxPublisher(repo, ledgerProducer, 2*time.Second)
 	go publisher.Start(context.Background())
 
-	handler := &LedgerHandler{repo: repo}
+	handler := &LedgerHandler{service: service}
 
 	mux := http.NewServeMux()
 
@@ -109,6 +113,7 @@ func main() {
 	// Wrap handler with OpenTelemetry
 	otelHandler := otelhttp.NewHandler(mux, "ledger-request")
 
+	// Standard metrics/tracing wrapper can be added here
 	go func() {
 		if err := http.ListenAndServe(":8083", otelHandler); err != nil {
 			log.Fatalf("HTTP server failed: %v", err)
@@ -121,7 +126,7 @@ func main() {
 		log.Fatalf("failed to listen for gRPC: %v", err)
 	}
 	s := grpc.NewServer()
-	pb.RegisterLedgerServiceServer(s, NewLedgerGRPCServer(repo))
+	pb.RegisterLedgerServiceServer(s, NewLedgerGRPCServer(service))
 
 	log.Println("Ledger service gRPC starting on :50052")
 	if err := s.Serve(lis); err != nil {

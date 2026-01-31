@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/marwan562/fintech-ecosystem/internal/ledger"
+	"github.com/marwan562/fintech-ecosystem/internal/ledger/domain"
 	pb "github.com/marwan562/fintech-ecosystem/proto/ledger"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -12,46 +12,33 @@ import (
 
 type LedgerGRPCServer struct {
 	pb.UnimplementedLedgerServiceServer
-	repo *ledger.Repository
+	service *domain.LedgerService
 }
 
-func NewLedgerGRPCServer(repo *ledger.Repository) *LedgerGRPCServer {
-	return &LedgerGRPCServer{repo: repo}
+func NewLedgerGRPCServer(service *domain.LedgerService) *LedgerGRPCServer {
+	return &LedgerGRPCServer{service: service}
 }
 
 func (s *LedgerGRPCServer) RecordTransaction(ctx context.Context, req *pb.RecordTransactionRequest) (*pb.RecordTransactionResponse, error) {
-	// For simplicity, we create a balanced transaction with two entries:
-	// One for the account (asset/revenue) and one for a balancing account (e.g. system equity or cash)
-	// In a real system, the caller would provide the full transaction structure.
-	// For here, we'll implement what the payments service needs: recording a payment.
-
-	// Let's assume the request amount is what needs to be added (positive) or subtracted (negative)
-	// from the account_id provided.
-
-	// Since the internal RecordTransaction expects a balanced set of entries,
-	// we'll simulate a double-entry for demonstration if only one account is provided.
-	// In a professional ledger, we'd have a 'balancing' account.
-
-	entry := ledger.EntryRequest{
+	entry := domain.EntryRequest{
 		AccountID: req.AccountId,
 		Amount:    req.Amount,
-		Direction: "credit", // Defaulting to credit for payment received? Ledger logic varies.
+		Direction: "credit",
 	}
 
-	// To balance it, we'd need another entry. Let's look for a system account or just use a dummy 'system' account.
-	balancingEntry := ledger.EntryRequest{
-		AccountID: "system_balancing", // This should ideally exist or be configurable
+	balancingEntry := domain.EntryRequest{
+		AccountID: "system_balancing",
 		Amount:    -req.Amount,
 		Direction: "debit",
 	}
 
-	txReq := ledger.TransactionRequest{
+	txReq := domain.TransactionRequest{
 		ReferenceID: req.ReferenceId,
 		Description: req.Description,
-		Entries:     []ledger.EntryRequest{entry, balancingEntry},
+		Entries:     []domain.EntryRequest{entry, balancingEntry},
 	}
 
-	err := s.repo.RecordTransaction(ctx, txReq)
+	err := s.service.RecordTransaction(ctx, txReq)
 	if err != nil {
 		log.Printf("GRPC RecordTransaction error: %v", err)
 		return nil, err
@@ -63,14 +50,14 @@ func (s *LedgerGRPCServer) RecordTransaction(ctx context.Context, req *pb.Record
 }
 
 func (s *LedgerGRPCServer) GetAccount(ctx context.Context, req *pb.GetAccountRequest) (*pb.GetAccountResponse, error) {
-	acc, err := s.repo.GetAccount(ctx, req.AccountId)
+	acc, err := s.service.GetAccount(ctx, req.AccountId)
 	if err != nil {
 		log.Printf("GRPC GetAccount error: %v", err)
 		return nil, err
 	}
 
 	if acc == nil {
-		return nil, nil // Or a specific gRPC error
+		return nil, nil
 	}
 
 	return &pb.GetAccountResponse{
