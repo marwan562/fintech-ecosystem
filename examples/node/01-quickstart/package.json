@@ -1,0 +1,18 @@
+{
+    "name": "fintech-quickstart",
+    "version": "1.0.0",
+    "description": "Quickstart example for Sapliy Fintech SDK",
+    "main": "index.js",
+    "scripts": {
+        "start": "ts-node index.ts"
+    },
+    "dependencies": {
+        "fintech-node-sdk": "file:../../../sdks/node",
+        "dotenv": "^16.0.0"
+    },
+    "devDependencies": {
+        "ts-node": "^10.9.1",
+        "typescript": "^5.0.0",
+        "@types/node": "^20.0.0"
+    }
+}

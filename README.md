@@ -1,6 +1,7 @@
-# Fintech Ecosystem
+# Sapliy Fintech Ecosystem
 
 **Open-source financial infrastructure** — a self-hosted alternative to Stripe. Run payments, ledgers, and webhooks on your own infrastructure with a clear, minimal scope and production-ready primitives.
+Developed by **Sapliy**, this ecosystem provides the building blocks for modern fintech applications.
 
 ---
 

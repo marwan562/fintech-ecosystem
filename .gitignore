@@ -13,3 +13,20 @@
 /auth
 /notifications
 /micro
+
+# SDKs
+# Node
+/examples/node/01-quickstart/node_modules
+/examples/node/01-quickstart/yarn-cache
+/examples/node/01-quickstart/dist
+/sdks/node/node_modules
+/sdks/node/yarn-cache
+/sdks/node/dist
+
+# Python
+/examples/python/01-quickstart/venv
+/sdks/python/venv
+
+# Go
+/examples/go/01-quickstart/vendor
+/sdks/go/vendor

@@ -73,5 +73,43 @@ Provide **developer-first, scalable, open-source financial infrastructure** that
 
 ---
 
+## Phase: Developer Experience & Optimization (v3.x)
+*Goal: World-class DX, performance, and ecosystem expansion.*
+
+### 🛠 SDK Enhancement
+- [ ] **Complete SDK Coverage** — Extend all SDKs to cover Payments, Wallets, Billing, Connect, and Webhooks APIs.
+- [ ] **Comprehensive Examples** — Create real-world examples for Node.js, Python, and Go.
+- [ ] **SDK Publishing** — Publish to npm (@sapliy/fintech), PyPI (sapliy-fintech), and Go modules.
+- [ ] **OpenAPI-based Generation** — Auto-generate SDKs from the OpenAPI spec for consistency.
+
+### ⚡ Performance & Scale
+- [ ] **Advanced Caching** — Implement Redis caching for hot paths (balances, account lookups).
+- [ ] **Batch Operations** — Add bulk payment/ledger APIs for high-volume scenarios.
+- [ ] **Query Optimization** — Optimize PostgreSQL queries with proper indexing and connection pooling.
+- [ ] **Async Job Prioritization** — Add priority queues for critical notifications.
+
+### 🎨 Customization
+- [ ] **Plugin Architecture** — Enable third-party plugins for payment gateways, KYC providers.
+- [ ] **Custom Metadata** — Allow arbitrary metadata on all entities (payments, accounts, subscriptions).
+- [ ] **White-Label Dashboard** — Support branding and theming for the hosted dashboard.
+
+---
+
+## Phase: Ecosystem Packages (v4.x)
+*Goal: Comprehensive fintech toolkit for developers and startups.*
+
+### 📦 Supporting Packages
+- [ ] **@sapliy/fintech-ui** — React components for checkout, payment forms, dashboards.
+- [ ] **fintech-testing** — Testing utilities, mock servers, fixtures for all SDKs.
+- [ ] **fintech-cli v2** — Enhanced CLI with init, generate, and deploy commands.
+- [ ] **fintech-examples** — Full sample applications (e-commerce, SaaS billing, marketplace).
+
+### 📚 Documentation & Community
+- [ ] **Documentation Site** — Dedicated docs site with tutorials, API reference, guides.
+- [ ] **Video Tutorials** — Walkthroughs for common use cases.
+- [ ] **Discord/Slack Community** — Developer community for support and collaboration.
+
+---
+
 ## Contributing
 We welcome contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for good first issues, commit style, and development setup.
