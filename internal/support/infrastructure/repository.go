@@ -92,7 +92,7 @@ func (r *SQLTicketRepository) ListTicketsByOrg(orgID string, status *domain.Tick
 	if err != nil {
 		return nil, 0, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	for rows.Next() {
 		t, err := r.scanTicketRows(rows)
@@ -143,7 +143,7 @@ func (r *SQLTicketRepository) ListCommentsByTicket(ticketID string) ([]*domain.T
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var comments []*domain.TicketComment
 	for rows.Next() {
@@ -219,7 +219,7 @@ func (r *SQLTierRepository) ListTiers(activeOnly bool) ([]*domain.SupportTier, e
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var tiers []*domain.SupportTier
 	for rows.Next() {
@@ -270,7 +270,7 @@ func (r *SQLTierRepository) GetSLADefinitions(tierID string) ([]*domain.SLADefin
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var slas []*domain.SLADefinition
 	for rows.Next() {
@@ -341,7 +341,7 @@ func (r *SQLContractRepository) ListContractsByOrg(orgID string) ([]*domain.Supp
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var contracts []*domain.SupportContract
 	for rows.Next() {

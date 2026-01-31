@@ -32,7 +32,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("did not connect to ledger gRPC: %v", err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 	ledgerClient := ledgerpb.NewLedgerServiceClient(conn)
 
 	// Initialize Domain Service

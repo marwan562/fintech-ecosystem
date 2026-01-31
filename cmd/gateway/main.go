@@ -324,7 +324,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("did not connect to wallet gRPC: %v", err)
 	}
-	defer connWallet.Close()
+	defer func() { _ = connWallet.Close() }()
 	walletClient := walletpb.NewWalletServiceClient(connWallet)
 
 	// Initialize Tracer

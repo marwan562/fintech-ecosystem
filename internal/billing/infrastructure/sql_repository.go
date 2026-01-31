@@ -48,7 +48,7 @@ func (r *SQLRepository) ListDueSubscriptions(ctx context.Context) ([]*domain.Sub
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var subs []*domain.Subscription
 	for rows.Next() {

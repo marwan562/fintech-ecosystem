@@ -37,7 +37,6 @@ func (r *SQLTemplateRepository) ListTemplates(activeOnly bool, category *domain.
 	if category != nil {
 		query += fmt.Sprintf(" AND category = $%d", argNum)
 		args = append(args, *category)
-		argNum++
 	}
 
 	query += " ORDER BY category, display_name"
@@ -46,7 +45,7 @@ func (r *SQLTemplateRepository) ListTemplates(activeOnly bool, category *domain.
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var templates []*domain.IntegrationTemplate
 	for rows.Next() {
@@ -194,7 +193,7 @@ func (r *SQLProjectRepository) ListProjectsByOrg(orgID string, status *domain.Pr
 	if err != nil {
 		return nil, 0, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	for rows.Next() {
 		p, err := r.scanProjectRows(rows)
@@ -262,7 +261,7 @@ func (r *SQLProjectRepository) ListMilestonesByProject(projectID string) ([]*dom
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var milestones []*domain.ProjectMilestone
 	for rows.Next() {
@@ -309,7 +308,7 @@ func (r *SQLProjectRepository) ListUpdatesByProject(projectID string, customerVi
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var updates []*domain.ProjectUpdate
 	for rows.Next() {
@@ -443,7 +442,7 @@ func (r *SQLConsultationRepository) scanConsultations(rows *sql.Rows, err error)
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var consultations []*domain.Consultation
 	for rows.Next() {
