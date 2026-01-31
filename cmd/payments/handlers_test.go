@@ -177,11 +177,11 @@ func TestPaymentHandler_IdempotencyMiddleware(t *testing.T) {
 			next := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if strings.Contains(tt.name, "Transient Error") {
 					w.WriteHeader(http.StatusInternalServerError)
-					w.Write([]byte("error"))
+					_, _ = w.Write([]byte("error"))
 					return
 				}
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("ok"))
+				_, _ = w.Write([]byte("ok"))
 			})
 
 			req := httptest.NewRequest("POST", "/test", nil)
