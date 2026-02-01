@@ -1,5 +1,5 @@
 {
-  "name": "fintech-node-sdk",
+  "name": "@sapliy/fintech",
   "version": "1.0.0",
   "description": "Fintech Ecosystem SDK for Node.js built by Sapliy",
   "main": "dist/index.js",
