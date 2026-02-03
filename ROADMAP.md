@@ -1,115 +1,171 @@
 # Product Roadmap
 
-Strategic plan to evolve this repo into a **production-grade, open-source fintech platform** — a self-hosted alternative to Stripe — with clear phases for quality, growth, and sustainable monetization.
+Strategic plan to evolve Sapliy into a **production-grade, open-source fintech automation platform** — combining the reliability of Stripe with the flexibility of Zapier.
 
 ---
 
 ## Vision
 
-Provide **developer-first, scalable, open-source financial infrastructure** that any team can run on their own cloud: payments, ledger, and webhooks with a small, clear scope and a path to hosted offerings and paid support.
+**Event-driven automation & policy platform for fintech and business flows.**
+
+Provide developer-first, scalable infrastructure where:
+- Everything is an **event**
+- Events trigger **flows**
+- Flows execute **actions**
+- All within isolated **zones**
+
+---
+
+## Core Mental Model
+
+```
+Organization → Zone → Event → Flow → Action
+```
+
+| Concept | Purpose |
+|---------|---------|
+| **Organization** | Owns everything, has users/teams/policies |
+| **Zone** | Isolated automation space with test/live modes |
+| **Event** | The universal trigger (SDK, UI, providers) |
+| **Flow** | Automation logic connecting events to actions |
 
 ---
 
 ## Versioned Journey
 
 | Version | Focus | Outcome |
-|---------|--------|---------|
-| **v0.x** | Foundation | Core primitives (payments, ledger, webhooks), docs, community standards. |
-| **v1.0** | Quality & Credibility | Unit/integration tests, idempotency, clean layering, contribution rules. Production-ready for self-host. |
-| **v1.x** | Growth & Scale | Scale, observability, SDKs, more primitives. |
-| **v2.x** | Services & Monetization | Hosted version, paid support, custom integrations for startups. |
+|---------|-------|---------|
+| **v0.x** | Foundation | Core primitives (payments, ledger, webhooks) |
+| **v1.0** | Quality | Tests, idempotency, clean layering |
+| **v1.x** | Growth | SDKs, observability, wallets |
+| **v2.x** | Services | Hosted version, enterprise support |
+| **v3.x** | DX | SDK enhancement, performance |
+| **v4.x** | Ecosystem | UI components, CLI v2, examples |
+| **v5.x** | Automation | Zone platform, flow engine, policies |
 
 ---
 
-## Phase: Quality & Credibility (v1.0)
-*Goal: Trust and maintainability. Ensure the platform is safe for production use and easy for contributors to join.*
+## Completed Phases
 
-### 🛠 Reliability & Testing
-- [x] **Unit Tests for Services** — Achieve high coverage for `internal/` (payment, ledger, auth). Focus on core business logic.
-- [x] **Table-Driven Tests** — Implement Go table-driven tests for all handlers and domain logic to cover edge cases efficiently.
-- [x] **Mock Interfaces** — Extract interfaces for repositories and external clients (Redis, Kafka) to allow robust unit testing without dependencies.
-- [x] **Idempotency Keys** — Implement `Idempotency-Key` support for payment creation and confirmation to handle retries safely.
+### Foundation (v0.x) ✅
+- [x] Core Primitives: Payments, Ledger, Webhooks
+- [x] Infrastructure: Kubernetes, Docker Compose, CI/CD
+- [x] Security: API Key hashing, OAuth2/OIDC, Scopes
 
-### 🏗 Architecture & Integrity
-- [x] **Ledger-Only Balance Updates** — Remove any code path updating balances directly. Enforce "balance = sum(entries)" as the single source of truth.
-- [x] **Layered Separation** — Clearly separate API (HTTP/gRPC), Domain (business logic), and Infrastructure (DB/Messaging). Keep the domain logic pure and framework-agnostic.
+### Quality & Credibility (v1.0) ✅
+- [x] Unit Tests for Services
+- [x] Table-Driven Tests
+- [x] Mock Interfaces
+- [x] Idempotency Keys
+- [x] Ledger-Only Balance Updates
+- [x] Layered Separation
 
----
+### Growth (v1.x) ✅
+- [x] SDKs (Node, Python, Go)
+- [x] Advanced Observability
+- [x] Wallets as First-Class Primitive
+- [x] Subscriptions & Billing
+- [x] Multi-tenancy & Rate Limiting
 
-## Phase: Growth and Long-Term Scale (v1.x)
-*Goal: Expand the ecosystem, improve developer experience (DX), and prepare for high-volume traffic.*
-
-### 🚀 Platform & DX
-- [x] **SDKs & API Stability** — Release official SDKs (Node, Python, Go) and maintain a stable, versioned REST/OpenAPI spec.
-- [x] **Advanced Observability** — Implement detailed dashboards and SLOs for latency and error rates across all services.
-- [x] **Wallets as a First-Class Primitive** — Add dedicated APIs for wallet management (top-ups, transfers), still backed by the ledger.
-
-### 📈 Features & Scale
-- [x] **Subscriptions & Billing** — Build recurring payment logic on top of the existing payment and ledger primitives.
-- [x] **Multi-tenancy & Rate Limiting** — Add tenant isolation and per-API-key quotas to support managed hosting environments.
-
----
-
-## Phase: Turn it into Services (v2.x)
-*Goal: Sustainable open source through optional commercial offerings.*
-
-### ☁️ Managed Offerings
-- [x] **Hosted Version (Fintech Cloud)** — Offer a managed deployment path where we handle infrastructure, security, and updates.
-- [x] **Enterprise Compliance** — SOC2/PCI-DSS compliance documentation and hardened security controls for the hosted tier.
-
-### 💼 Commercial Support
-- [x] **Paid Support & SLAs** — Offer tiered support packages for companies requiring guaranteed uptime and priority bugfixes.
-- [x] **Custom Integrations** — Provide professional services for complex migrations (e.g., from Stripe) and bespoke marketplace setups.
-
+### Services (v2.x) ✅
+- [x] Hosted Version (Fintech Cloud)
+- [x] Enterprise Compliance
+- [x] Paid Support & SLAs
+- [x] Custom Integrations
 
 ---
 
-## Completed (Foundation)
-- [x] Core Primitives: Payments, Ledger, Webhooks.
-- [x] Community: CONTRIBUTING, Code of Conduct, PR Templates.
-- [x] Infrastructure: Kubernetes/Helm, Docker Compose, CI/CD.
-- [x] Security: API Key hashing, OAuth2/OIDC, Scopes.
-- [x] Advanced Features: Connect/Marketplace, RBAC, Webhook Signing.
+## Current Phase
+
+### Developer Experience (v3.x) 🔄
+- [ ] **Complete SDK Coverage** — All APIs in all SDKs
+- [ ] **Comprehensive Examples** — Real-world use cases
+- [ ] **SDK Publishing** — npm, PyPI, Go modules
+- [ ] **OpenAPI-based Generation** — Auto-generate SDKs
+- [ ] **Advanced Caching** — Redis for hot paths
+- [ ] **Batch Operations** — Bulk APIs
+
+### Ecosystem Packages (v4.x)
+- [ ] **@sapliyio/fintech-ui** — React components
+- [ ] **fintech-testing** — Test utilities
+- [ ] **fintech-cli v2** — Enhanced CLI
+- [ ] **fintech-examples** — Sample apps
+- [ ] **Documentation Site** — VitePress docs
 
 ---
 
-## Phase: Developer Experience & Optimization (v3.x)
-*Goal: World-class DX, performance, and ecosystem expansion.*
+## Upcoming Phase
 
-### 🛠 SDK Enhancement
-- [ ] **Complete SDK Coverage** — Extend all SDKs to cover Payments, Wallets, Billing, Connect, and Webhooks APIs.
-- [ ] **Comprehensive Examples** — Create real-world examples for Node.js, Python, and Go.
-- [ ] **SDK Publishing** — Publish to npm (@sapliyio/fintech), PyPI (sapliy-fintech), and Go modules.
-- [ ] **OpenAPI-based Generation** — Auto-generate SDKs from the OpenAPI spec for consistency.
+### Zone & Automation Platform (v5.x) 🚀
 
-### ⚡ Performance & Scale
-- [ ] **Advanced Caching** — Implement Redis caching for hot paths (balances, account lookups).
-- [ ] **Batch Operations** — Add bulk payment/ledger APIs for high-volume scenarios.
-- [ ] **Query Optimization** — Optimize PostgreSQL queries with proper indexing and connection pooling.
-- [ ] **Async Job Prioritization** — Add priority queues for critical notifications.
+The next major evolution — transforming from a payment processor into a full automation platform.
 
-### 🎨 Customization
-- [ ] **Plugin Architecture** — Enable third-party plugins for payment gateways, KYC providers.
-- [ ] **Custom Metadata** — Allow arbitrary metadata on all entities (payments, accounts, subscriptions).
-- [ ] **White-Label Dashboard** — Support branding and theming for the hosted dashboard.
+#### Core Zone Features
+- [ ] **Zone Management API** — CRUD for zones
+- [ ] **Test/Live Mode Isolation** — Separate keys, logs, flows
+- [ ] **Zone-Scoped Events** — Events bound to zones
+- [ ] **Zone Templates** — Quick-start configurations
+
+#### Flow Engine
+- [ ] **Visual Flow Builder** — Drag-and-drop UI
+- [ ] **Event Triggers** — SDK, webhooks, schedule
+- [ ] **Logic Nodes** — Conditions, filters, approvals
+- [ ] **Action Nodes** — Webhooks, notifications, audit
+
+#### Policy Engine
+- [ ] **Phase 1**: Hardcoded policies (admin, finance roles)
+- [ ] **Phase 2**: JSON policy language
+- [ ] **Phase 3**: Full OPA-style engine
+
+#### Developer Tools
+- [ ] **CLI Enhancements** — Zone switching, event triggers
+- [ ] **Debug Mode** — Real-time flow inspection
+- [ ] **Webhook Replay** — Re-trigger past events
 
 ---
 
-## Phase: Ecosystem Packages (v4.x)
-*Goal: Comprehensive fintech toolkit for developers and startups.*
+## Monetization Strategy
 
-### 📦 Supporting Packages
-- [ ] **@sapliyio/fintech-ui** — React components for checkout, payment forms, dashboards.
-- [ ] **fintech-testing** — Testing utilities, mock servers, fixtures for all SDKs.
-- [ ] **fintech-cli v2** — Enhanced CLI with init, generate, and deploy commands.
-- [ ] **fintech-examples** — Full sample applications (e-commerce, SaaS billing, marketplace).
+| Tier | Zones | Events/mo | Price |
+|------|-------|-----------|-------|
+| **Free** | 1 | 1,000 | $0 |
+| **Starter** | 3 | 10,000 | $29/mo |
+| **Pro** | Unlimited | 100,000 | $99/mo |
+| **Enterprise** | Custom | Custom | Contact |
 
-### 📚 Documentation & Community
-- [ ] **Documentation Site** — Dedicated docs site with tutorials, API reference, guides.
-- [ ] **Video Tutorials** — Walkthroughs for common use cases.
-- [ ] **Discord/Slack Community** — Developer community for support and collaboration.
+Revenue drivers:
+- Zone count
+- Event volume
+- Notification credits (WhatsApp, SMS)
+- Third-party plugins
+- Hosted execution
+- SLA guarantees
+
+---
+
+## Repository Structure
+
+| Repo | Responsibility |
+|------|----------------|
+| `fintech-ecosystem` | Core engine (auth, zones, events, flows) |
+| `fintech-sdk-node` | Node.js SDK |
+| `fintech-sdk-go` | Go SDK |
+| `fintech-sdk-python` | Python SDK |
+| `fintech-ui` | React components |
+| `fintech-automation` | Flow Builder UI |
+| `sapliy-cli` | Developer CLI |
+| `fintech-docs` | Documentation site |
+
+See [ARCHITECTURE.md](../ARCHITECTURE.md) for the full system design.
 
 ---
 
 ## Contributing
-We welcome contributions. See [CONTRIBUTING.md](CONTRIBUTING.md) for good first issues, commit style, and development setup.
+
+We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+## License
+
+MIT © [Sapliy](https://github.com/sapliy)
