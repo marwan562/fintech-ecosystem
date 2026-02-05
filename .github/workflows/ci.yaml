@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   lint:
@@ -15,7 +15,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: "1.24"
           cache: false
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v4
@@ -50,7 +50,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: "1.24"
       - name: Run Tests
         run: go test -v ./...
 
@@ -60,7 +60,8 @@ jobs:
     needs: [lint, test]
     strategy:
       matrix:
-        service: [auth, gateway, ledger, payments, fraud, notifications, reconciler]
+        service:
+          [auth, gateway, ledger, payments, fraud, notifications, reconciler]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx

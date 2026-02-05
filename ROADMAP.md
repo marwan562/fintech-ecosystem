@@ -85,18 +85,14 @@ Organization → Zone → Event → Flow → Action
 - [x] **Advanced Caching** — Redis integration for Ledger and Zone services
 - [x] **Batch Operations** — Bulk APIs for Zone, Flow, and Ledger
 
-### Ecosystem Packages (v4.x)
+### Ecosystem Packages (v4.x) ✅
 - [x] **@sapliyio/fintech-ui** — React components
 - [x] **fintech-testing** — Test utilities
 - [x] **sapliy-cli v2** — Enhanced CLI
 - [x] **fintech-examples** — Sample apps
 - [x] **Documentation Site** — VitePress docs
 
----
-
-## Upcoming Phase
-
-### Zone & Automation Platform (v5.x) 🚀
+### Zone & Automation Platform (v5.x) ✅
 
 The next major evolution — transforming from a payment processor into a full automation platform.
 
@@ -120,7 +116,30 @@ The next major evolution — transforming from a payment processor into a full a
 #### Developer Tools
 - [x] **CLI Enhancements** — Zone switching, event triggers
 - [x] **Debug Mode** — Real-time flow inspection
-- [ ] **Webhook Replay** — Re-trigger past events
+- [x] **Webhook Replay** — Re-trigger past events
+
+---
+
+## Upcoming Phase
+
+### Production Excellence (v6.0) 🛡️
+
+Focus on long-term sustainability, reliability, and automated delivery.
+
+#### Standardized CI/CD
+- [ ] **Unified Pipelines** — GitHub Actions for all repositories
+- [ ] **Automated Release** — Semantic versioning for SDKs and CLI
+- [ ] **Infrastructure as Code** — Managed Kubernetes/Docker configs
+
+#### Quality Assurance
+- [ ] **Full Test Coverage** — Unit tests for all UI components and services
+- [ ] **E2E Integration Suite** — Cross-repo validation tests
+- [ ] **Load & Stress Testing** — Benchmarking the flow engine
+
+#### Operational Excellence
+- [ ] **Advanced Logging** — Structured JSON logging across all services
+- [ ] **Performance Tuning** — Optimizing Kafka and DB bottlenecks
+- [ ] **Documentation v2** — Comprehensive "How-to" guides for developers
 
 ---
 

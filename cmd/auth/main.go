@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/redis/go-redis/v9"
 	"github.com/sapliy/fintech-ecosystem/internal/auth/domain"
@@ -253,22 +256,43 @@ func main() {
 	})
 	mux.HandleFunc("/debug/ws", debugHandler.WebSocketDebug)
 
-	log.Println("Auth service HTTP starting on :8081")
+	// Initialize Logger
+	logger := observability.NewLogger("auth-service")
 
 	// Wrap handler with OpenTelemetry and Prometheus
 	otelHandler := otelhttp.NewHandler(mux, "auth-request")
 	promHandler := monitoring.PrometheusMiddleware(otelHandler)
 
+	port := "8081"        // Define port for HTTP server
+	router := promHandler // Define router for HTTP server
+
+	logger.Info("Auth Service starting", "port", port)
+	logger.Info("Debug API available", "url", fmt.Sprintf("http://localhost:%s/api/v1", port))
+	logger.Info("WebSocket available", "url", fmt.Sprintf("ws://localhost:%s/api/v1/auth/debug/ws", port))
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	srv := &http.Server{
+		Addr:    ":" + port,
+		Handler: router,
+	}
+
 	go func() {
-		if err := http.ListenAndServe(":8081", promHandler); err != nil {
-			log.Fatalf("HTTP server failed: %v", err)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Error("HTTP server error", "error", err)
+			os.Exit(1)
 		}
 	}()
+
+	<-ctx.Done()
+	logger.Info("Shutting down Auth Service...")
 
 	// Start gRPC Server
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		log.Fatalf("failed to listen for gRPC: %v", err)
+		logger.Error("Failed to listen for gRPC", "error", err)
+		os.Exit(1)
 	}
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(monitoring.UnaryServerInterceptor("auth")),

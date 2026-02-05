@@ -2,10 +2,10 @@ name: SDK Generation
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - 'proto/**'
-      - '.github/workflows/sdk_gen.yml'
+      - "proto/**"
+      - ".github/workflows/sdk_gen.yml"
 
 jobs:
   generate-sdk:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.21' # Using a stable version for tooling
+          go-version: "1.21" # Using a stable version for tooling
 
       - name: Install Protoc
         uses: arduino/setup-protoc@v3
@@ -32,11 +32,11 @@ jobs:
           protoc -I . -I third_party \
             --openapiv2_out=logtostderr=true,allow_merge=true,merge_file_name=fintech:generated/openapi \
             $(find proto -name "*.proto")
-          
+
           # The merge option creates a single 'fintech.swagger.json' if possible, or separate files.
           # Let's adjust the generation to keep it simple first or just point to the right file later.
           # With allow_merge=true, it tries to merge.
-          
+
           ls -R generated/openapi
 
       - name: Generate Node.js SDK
