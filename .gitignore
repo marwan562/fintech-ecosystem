@@ -32,6 +32,7 @@ notification-service
 billing-service
 connect-service
 wallet-service
+events-service
 bin/
 
 # local dependencies
