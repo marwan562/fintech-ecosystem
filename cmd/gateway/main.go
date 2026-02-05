@@ -11,20 +11,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/marwan562/fintech-ecosystem/pkg/apikey"
-	"github.com/marwan562/fintech-ecosystem/pkg/jsonutil"
-	"github.com/marwan562/fintech-ecosystem/pkg/observability"
-	"github.com/marwan562/fintech-ecosystem/pkg/scopes"
+	"github.com/sapliy/fintech-ecosystem/pkg/apikey"
+	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
+	"github.com/sapliy/fintech-ecosystem/pkg/observability"
+	"github.com/sapliy/fintech-ecosystem/pkg/scopes"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
-	pb "github.com/marwan562/fintech-ecosystem/proto/auth"
-	walletpb "github.com/marwan562/fintech-ecosystem/proto/wallet"
+	pb "github.com/sapliy/fintech-ecosystem/proto/auth"
+	walletpb "github.com/sapliy/fintech-ecosystem/proto/wallet"
 
 	"github.com/gorilla/websocket"
-	"github.com/marwan562/fintech-ecosystem/pkg/monitoring"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/redis/go-redis/v9"
+	"github.com/sapliy/fintech-ecosystem/pkg/monitoring"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

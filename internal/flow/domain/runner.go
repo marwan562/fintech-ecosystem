@@ -27,10 +27,10 @@ func NewFlowRunner(repo Repository) *FlowRunner {
 }
 
 func (r *FlowRunner) registerDefaultHandlers() {
-	r.handlers["condition"] = &ConditionHandler{}
-	r.handlers["webhook"] = &WebhookHandler{}
-	r.handlers["approval"] = &ApprovalHandler{}
-	r.handlers["audit"] = &AuditHandler{}
+	r.handlers[NodeCondition] = &ConditionHandler{}
+	r.handlers[NodeWebhook] = &WebhookHandler{}
+	r.handlers[NodeApproval] = &ApprovalHandler{}
+	r.handlers[NodeAuditLog] = &AuditHandler{}
 }
 
 func (r *FlowRunner) Execute(ctx context.Context, flow *Flow, input map[string]interface{}) error {
@@ -64,7 +64,7 @@ func (r *FlowRunner) Execute(ctx context.Context, flow *Flow, input map[string]i
 }
 
 func (r *FlowRunner) executeNode(ctx context.Context, flow *Flow, node *Node, input map[string]interface{}, exec *FlowExecution) error {
-	log.Printf("Executing node %s (%s)", node.ID, node.Subtype)
+	log.Printf("Executing node %s (%s)", node.ID, node.Type)
 	exec.CurrentNodeID = node.ID
 
 	step := ExecutionStep{
@@ -77,7 +77,7 @@ func (r *FlowRunner) executeNode(ctx context.Context, flow *Flow, node *Node, in
 	var output map[string]interface{}
 	var err error
 
-	handler, ok := r.handlers[node.Subtype]
+	handler, ok := r.handlers[node.Type]
 	if ok {
 		output, err = handler.Execute(ctx, node, input)
 	} else {
@@ -105,7 +105,7 @@ func (r *FlowRunner) executeNode(ctx context.Context, flow *Flow, node *Node, in
 	var nextNodes []*Node
 	for _, edge := range flow.Edges {
 		if edge.Source == node.ID {
-			if node.Subtype == "condition" {
+			if node.Type == NodeCondition {
 				res, _ := output["result"].(bool)
 				if (res && edge.SourceHandle == "true") || (!res && edge.SourceHandle == "false") {
 					for _, n := range flow.Nodes {
@@ -206,7 +206,7 @@ func (h *ConditionHandler) Execute(ctx context.Context, node *Node, input map[st
 		Operator string      `json:"operator"`
 		Value    interface{} `json:"value"`
 	}
-	json.Unmarshal(node.Config, &config)
+	json.Unmarshal(node.Data, &config)
 
 	inputValue, ok := input[config.Field]
 	if !ok {

@@ -9,9 +9,11 @@ import (
 type NodeType string
 
 const (
-	NodeTrigger NodeType = "trigger"
-	NodeLogic   NodeType = "logic"
-	NodeAction  NodeType = "action"
+	NodeTrigger   string = "eventTrigger"
+	NodeCondition string = "condition"
+	NodeWebhook   string = "webhook"
+	NodeApproval  string = "approval"
+	NodeAuditLog  string = "auditLog"
 )
 
 type Flow struct {
