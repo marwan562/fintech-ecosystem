@@ -14,13 +14,13 @@ type NodeHandler interface {
 
 type FlowRunner struct {
 	repo     Repository
-	handlers map[string]NodeHandler
+	handlers map[NodeType]NodeHandler
 }
 
 func NewFlowRunner(repo Repository) *FlowRunner {
 	r := &FlowRunner{
 		repo:     repo,
-		handlers: make(map[string]NodeHandler),
+		handlers: make(map[NodeType]NodeHandler),
 	}
 	r.registerDefaultHandlers()
 	return r

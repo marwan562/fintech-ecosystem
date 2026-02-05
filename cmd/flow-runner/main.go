@@ -88,13 +88,22 @@ func main() {
 }
 
 func matchesTrigger(flow *domain.Flow, topic string, event map[string]interface{}) bool {
-	// Simple trigger matching for now: trigger subtype must match topic/event_type
+	eventType, _ := event["type"].(string)
+
 	for _, n := range flow.Nodes {
 		if n.Type == domain.NodeTrigger {
-			// Subtype example: "payment.succeeded"
-			// topic example: "payments"
-			// This is a simple logic, needs refinement
-			return true
+			var data struct {
+				EventType string `json:"eventType"`
+			}
+			json.Unmarshal(n.Data, &data)
+
+			if data.EventType == eventType {
+				return true
+			}
+			// Fallback for generic triggers
+			if data.EventType == "" || data.EventType == "*" {
+				return true
+			}
 		}
 	}
 	return false

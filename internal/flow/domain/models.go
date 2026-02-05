@@ -9,11 +9,11 @@ import (
 type NodeType string
 
 const (
-	NodeTrigger   string = "eventTrigger"
-	NodeCondition string = "condition"
-	NodeWebhook   string = "webhook"
-	NodeApproval  string = "approval"
-	NodeAuditLog  string = "auditLog"
+	NodeTrigger   NodeType = "eventTrigger"
+	NodeCondition NodeType = "condition"
+	NodeWebhook   NodeType = "webhook"
+	NodeApproval  NodeType = "approval"
+	NodeAuditLog  NodeType = "auditLog"
 )
 
 type Flow struct {
@@ -31,7 +31,7 @@ type Flow struct {
 
 type Node struct {
 	ID       string          `json:"id"`
-	Type     string          `json:"type"`     // React Flow type (e.g. "eventTrigger", "condition")
+	Type     NodeType        `json:"type"`     // React Flow type (e.g. "eventTrigger", "condition")
 	Position json.RawMessage `json:"position"` // React Flow position
 	Data     json.RawMessage `json:"data"`     // React Flow data (node configuration)
 }
