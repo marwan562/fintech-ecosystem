@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"github.com/sapliy/fintech-ecosystem/internal/payment/domain"
 	"github.com/sapliy/fintech-ecosystem/internal/payment/infrastructure"
 	"github.com/sapliy/fintech-ecosystem/pkg/bank"
@@ -20,12 +20,13 @@ import (
 
 	"context"
 
-	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
+	logger := observability.NewLogger("payments-service")
+
 	// Default DSN for local development (Port 5434 for payments)
 	dsn := os.Getenv("DB_DSN")
 	if dsn == "" {
@@ -34,19 +35,20 @@ func main() {
 
 	db, err := database.Connect(dsn)
 	if err != nil {
-		log.Printf("Warning: Database connection failed (ensure Docker is running): %v", err)
+		logger.Warn("Database connection failed", "error", err)
 	} else {
-		log.Println("Database connection established")
+		logger.Info("Database connection established")
 
 		// Run automated migrations
 		if err := database.Migrate(db, "payments", "migrations/payments"); err != nil {
-			log.Fatalf("Failed to run migrations: %v", err)
+			logger.Error("Failed to run migrations", "error", err)
+			os.Exit(1)
 		}
 	}
 	if db != nil {
 		defer func() {
 			if err := db.Close(); err != nil {
-				log.Printf("Failed to close DB: %v", err)
+				logger.Error("Failed to close DB", "error", err)
 			}
 		}()
 	}
@@ -60,7 +62,7 @@ func main() {
 		Addr: redisAddr,
 	})
 	if err := rdb.Ping(context.Background()).Err(); err != nil {
-		log.Printf("Warning: Redis connection failed in Payments: %v", err)
+		logger.Warn("Redis connection failed in Payments", "error", err)
 	}
 
 	// Initialize dependencies
@@ -78,11 +80,12 @@ func main() {
 		grpc.WithUnaryInterceptor(monitoring.UnaryClientInterceptor("payments")),
 	)
 	if err != nil {
-		log.Fatalf("did not connect to ledger gRPC: %v", err)
+		logger.Error("did not connect to ledger gRPC", "error", err)
+		os.Exit(1)
 	}
 	defer func() {
 		if err := conn.Close(); err != nil {
-			log.Printf("Failed to close gRPC connection: %v", err)
+			logger.Error("Failed to close gRPC connection", "error", err)
 		}
 	}()
 	ledgerClient := pb.NewLedgerServiceClient(conn)
@@ -96,7 +99,7 @@ func main() {
 	kafkaProducer := messaging.NewKafkaProducer(brokers, "payments")
 	defer func() {
 		if err := kafkaProducer.Close(); err != nil {
-			log.Printf("Failed to close Kafka producer: %v", err)
+			logger.Error("Failed to close Kafka producer", "error", err)
 		}
 	}()
 
@@ -113,11 +116,11 @@ func main() {
 		CircuitBreakerEnabled: true,
 	})
 	if err != nil {
-		log.Printf("Warning: Failed to connect to RabbitMQ: %v", err)
+		logger.Warn("Failed to connect to RabbitMQ", "error", err)
 	} else {
 		defer rabbitClient.Close()
 		if _, err := rabbitClient.DeclareQueue("notifications"); err != nil {
-			log.Printf("Failed to declare queue: %v", err)
+			logger.Error("Failed to declare queue", "error", err)
 		}
 	}
 
@@ -129,11 +132,11 @@ func main() {
 		Environment:    "production",
 	})
 	if err != nil {
-		log.Printf("Failed to init tracer: %v", err)
+		logger.Error("Failed to init tracer", "error", err)
 	} else {
 		defer func() {
 			if err := shutdown(context.Background()); err != nil {
-				log.Printf("Failed to shutdown tracer: %v", err)
+				logger.Error("Failed to shutdown tracer", "error", err)
 			}
 		}()
 	}
@@ -186,13 +189,15 @@ func main() {
 		jsonutil.WriteErrorJSON(w, "Not Found")
 	})
 
-	log.Println("Payments service starting on :8082")
+	port := ":8082"
+	logger.Info("Payments service starting", "port", port)
 
 	// Wrap handler with OpenTelemetry and Prometheus
 	otelHandler := otelhttp.NewHandler(mux, "payments-request")
 	promHandler := monitoring.PrometheusMiddleware(otelHandler)
 
-	if err := http.ListenAndServe(":8082", promHandler); err != nil {
-		log.Fatalf("Server failed: %v", err)
+	if err := http.ListenAndServe(port, promHandler); err != nil {
+		logger.Error("Server failed", "error", err)
+		os.Exit(1)
 	}
 }

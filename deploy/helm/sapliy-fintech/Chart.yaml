@@ -1,0 +1,30 @@
+apiVersion: v2
+name: sapliy-fintech
+description: A Helm chart for Sapliy Fintech Ecosystem
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keywords:
+  - fintech
+  - payments
+  - automation
+  - microservices
+home: https://sapliy.io
+sources:
+  - https://github.com/sapliy/fintech-ecosystem
+maintainers:
+  - name: Sapliy Team
+    email: team@sapliy.io
+dependencies:
+  - name: postgresql
+    version: 12.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+  - name: redis
+    version: 17.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+  - name: kafka
+    version: 22.x.x
+    repository: https://charts.bitnami.com/bitnami
+    condition: kafka.enabled

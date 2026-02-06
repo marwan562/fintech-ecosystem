@@ -1,0 +1,256 @@
+version: '3.8'
+
+services:
+  # Infrastructure Services
+  postgres:
+    image: postgres:15-alpine
+    container_name: sapliy_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sapliy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sapliy123}
+      POSTGRES_DB: ${POSTGRES_DB:-sapliy}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - sapliy-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sapliy}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: sapliy_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - sapliy-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Event Streaming (Redpanda - Kafka compatible)
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
+    container_name: sapliy_redpanda
+    command:
+      - redpanda
+      - start
+      - --smp
+      - '1'
+      - --reserve-memory
+      - 0M
+      - --overprovisioned
+      - --node-id
+      - '0'
+      - --bootstrap-server
+      - localhost:9092
+      - --advertise-kafka-addr
+      - localhost:9092
+      - --pandaproxy-addr
+      - localhost:8082
+      - --advertise-pandaproxy-addr
+      - localhost:8082
+    ports:
+      - "${KAFKA_PORT:-9092}:9092"
+      - "${KAFKA_ADMIN_PORT:-9644}:9644"
+      - "${KAFKA_PROXY_PORT:-8082}:8082"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    networks:
+      - sapliy-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f localhost:9644/v1/status/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Message Queue
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: sapliy_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-sapliy}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-sapliy123}
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MGMT_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - sapliy-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Application Services
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      target: auth-service
+    container_name: sapliy_auth
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-sapliy}:${POSTGRES_PASSWORD:-sapliy123}@postgres:5432/${POSTGRES_DB:-sapliy}?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+      - KAFKA_BROKERS=redpanda:9092
+    ports:
+      - "${AUTH_PORT:-8081}:8081"
+    networks:
+      - sapliy-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  payments-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      target: payments-service
+    container_name: sapliy_payments
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-sapliy}:${POSTGRES_PASSWORD:-sapliy123}@postgres:5432/${POSTGRES_DB:-sapliy}?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+      - KAFKA_BROKERS=redpanda:9092
+    ports:
+      - "${PAYMENTS_PORT:-8082}:8082"
+    networks:
+      - sapliy-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  ledger-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      target: ledger-service
+    container_name: sapliy_ledger
+    environment:
+      - DATABASE_URL=postgres://${POSTGRES_USER:-sapliy}:${POSTGRES_PASSWORD:-sapliy123}@postgres:5432/${POSTGRES_DB:-sapliy}?sslmode=disable
+      - REDIS_URL=redis://redis:6379
+      - KAFKA_BROKERS=redpanda:9092
+    ports:
+      - "${LEDGER_PORT:-8083}:8083"
+    networks:
+      - sapliy-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      redpanda:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # API Gateway
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+      target: gateway
+    container_name: sapliy_gateway
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8081
+      - PAYMENTS_SERVICE_URL=http://payments-service:8082
+      - LEDGER_SERVICE_URL=http://ledger-service:8083
+    ports:
+      - "${GATEWAY_PORT:-8080}:8080"
+    networks:
+      - sapliy-net
+    depends_on:
+      - auth-service
+      - payments-service
+      - ledger-service
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Observability
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sapliy_prometheus
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - sapliy-net
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sapliy_grafana
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin123}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - sapliy-net
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  redpanda_data:
+  rabbitmq_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  sapliy-net:
+    driver: bridge

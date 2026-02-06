@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -49,10 +48,11 @@ type GatewayHandler struct {
 	authClient             pb.AuthServiceClient
 	walletClient           walletpb.WalletServiceClient
 	hmacSecret             string
+	logger                 *observability.Logger
 }
 
 // NewGatewayHandler creates a new instance of GatewayHandler.
-func NewGatewayHandler(auth, payment, ledger, wallet, billing, notification string, rdb *redis.Client, authClient pb.AuthServiceClient, walletClient walletpb.WalletServiceClient, hmacSecret string) *GatewayHandler {
+func NewGatewayHandler(auth, payment, ledger, wallet, billing, notification string, rdb *redis.Client, authClient pb.AuthServiceClient, walletClient walletpb.WalletServiceClient, hmacSecret string, logger *observability.Logger) *GatewayHandler {
 	return &GatewayHandler{
 		authServiceURL:         auth,
 		paymentServiceURL:      payment,
@@ -67,6 +67,7 @@ func NewGatewayHandler(auth, payment, ledger, wallet, billing, notification stri
 		authClient:   authClient,
 		walletClient: walletClient,
 		hmacSecret:   hmacSecret,
+		logger:       logger,
 	}
 }
 
@@ -74,7 +75,7 @@ func NewGatewayHandler(auth, payment, ledger, wallet, billing, notification stri
 func (h *GatewayHandler) validateKeyWithAuthService(ctx context.Context, keyHash string) (string, string, string, string, string, int32, string, string, bool) {
 	res, err := h.authClient.ValidateKey(ctx, &pb.ValidateKeyRequest{KeyHash: keyHash})
 	if err != nil {
-		log.Printf("Auth service gRPC validation call failed: %v", err)
+		h.logger.Error("Auth service gRPC validation call failed", "error", err)
 		return "", "", "", "", "", 0, "", "", false
 	}
 
@@ -105,7 +106,7 @@ func (h *GatewayHandler) checkRateLimit(ctx context.Context, keyHash string, quo
 func (h *GatewayHandler) proxyRequest(target string, w http.ResponseWriter, r *http.Request) {
 	targetURL, err := url.Parse(target)
 	if err != nil {
-		log.Printf("Error parsing target URL %s: %v", target, err)
+		h.logger.Error("Error parsing target URL", "target", target, "error", err)
 		jsonutil.WriteErrorJSON(w, "Internal Server Error; Invalid Target")
 		return
 	}
@@ -139,7 +140,7 @@ func (h *GatewayHandler) proxyRequest(target string, w http.ResponseWriter, r *h
 // ServeHTTP implements the http.Handler interface with Middleware.
 func (h *GatewayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
-	log.Printf("Gateway: Incoming %s %s", r.Method, path)
+	h.logger.Info("Incoming request", "method", r.Method, "path", path)
 
 	// Public Endpoints / Auth Management (JWT based or public)
 	if path == "/ws" {
@@ -148,7 +149,7 @@ func (h *GatewayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if strings.HasPrefix(path, "/auth") || path == "/health" {
-		log.Printf("Gateway: Routing public path %s", path)
+		h.logger.Debug("Routing public path", "path", path)
 		h.routePublic(w, r)
 		return
 	}
@@ -185,7 +186,7 @@ func (h *GatewayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Rate Limiting
 	allowed, err := h.checkRateLimit(r.Context(), keyHash, quota)
 	if err != nil {
-		log.Printf("Redis error: %v", err)
+		h.logger.Error("Redis error in rate limiter", "error", err)
 		// Fail open or closed? Closed for security.
 		jsonutil.WriteErrorJSON(w, "Internal Server Error")
 		return
@@ -235,26 +236,26 @@ func (h *GatewayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h *GatewayHandler) handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	conn, err := h.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("WS upgrade failed: %v", err)
+		h.logger.Error("WS upgrade failed", "error", err)
 		return
 	}
 	defer func() {
 		if err := conn.Close(); err != nil {
-			log.Printf("Failed to close WS connection: %v", err)
+			h.logger.Warn("Failed to close WS connection", "error", err)
 		}
 	}()
 
 	pubsub := h.rdb.Subscribe(r.Context(), "webhook_events")
 	defer func() {
 		if err := pubsub.Close(); err != nil {
-			log.Printf("Failed to close Redis PubSub: %v", err)
+			h.logger.Warn("Failed to close Redis PubSub", "error", err)
 		}
 	}()
 
 	ch := pubsub.Channel()
 	for msg := range ch {
 		if err := conn.WriteMessage(websocket.TextMessage, []byte(msg.Payload)); err != nil {
-			log.Printf("WS write failed: %v", err)
+			h.logger.Error("WS write failed", "error", err)
 			break
 		}
 	}
@@ -277,6 +278,8 @@ func (h *GatewayHandler) routePublic(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	logger := observability.NewLogger("gateway-service")
+
 	// configuration
 	redisAddr := os.Getenv("REDIS_ADDR")
 	if redisAddr == "" {
@@ -321,9 +324,9 @@ func main() {
 	})
 	// Ping Redis
 	if err := rdb.Ping(context.Background()).Err(); err != nil {
-		log.Printf("Warning: Redis connection failed: %v", err)
+		logger.Warn("Redis connection failed", "error", err)
 	} else {
-		log.Println("Redis connection established")
+		logger.Info("Redis connection established")
 	}
 
 	// Setup Auth Service gRPC Client
@@ -336,11 +339,12 @@ func main() {
 		grpc.WithUnaryInterceptor(monitoring.UnaryClientInterceptor("gateway")),
 	)
 	if err != nil {
-		log.Fatalf("did not connect to auth gRPC: %v", err)
+		logger.Error("did not connect to auth gRPC", "error", err)
+		os.Exit(1)
 	}
 	defer func() {
 		if err := conn.Close(); err != nil {
-			log.Printf("Failed to close gRPC connection: %v", err)
+			logger.Error("Failed to close gRPC connection", "error", err)
 		}
 	}()
 	authClient := pb.NewAuthServiceClient(conn)
@@ -355,7 +359,8 @@ func main() {
 		grpc.WithUnaryInterceptor(monitoring.UnaryClientInterceptor("gateway")),
 	)
 	if err != nil {
-		log.Fatalf("did not connect to wallet gRPC: %v", err)
+		logger.Error("did not connect to wallet gRPC", "error", err)
+		os.Exit(1)
 	}
 	defer func() { _ = connWallet.Close() }()
 	walletClient := walletpb.NewWalletServiceClient(connWallet)
@@ -368,11 +373,11 @@ func main() {
 		Environment:    "production",
 	})
 	if err != nil {
-		log.Printf("Failed to init tracer: %v", err)
+		logger.Error("Failed to init tracer", "error", err)
 	} else {
 		defer func() {
 			if err := shutdown(context.Background()); err != nil {
-				log.Printf("Failed to shutdown tracer: %v", err)
+				logger.Error("Failed to shutdown tracer", "error", err)
 			}
 		}()
 	}
@@ -384,10 +389,10 @@ func main() {
 	hmacSecret := os.Getenv("API_KEY_HMAC_SECRET")
 	if hmacSecret == "" {
 		hmacSecret = "local-dev-secret-do-not-use-in-prod"
-		log.Println("Warning: API_KEY_HMAC_SECRET not set, using default for dev")
+		logger.Warn("API_KEY_HMAC_SECRET not set, using default for dev")
 	}
 
-	gateway := NewGatewayHandler(authURL, paymentURL, ledgerURL, walletURL, billingURL, notificationURL, rdb, authClient, walletClient, hmacSecret)
+	gateway := NewGatewayHandler(authURL, paymentURL, ledgerURL, walletURL, billingURL, notificationURL, rdb, authClient, walletClient, hmacSecret, logger)
 
 	// Wrap handler with OpenTelemetry and Prometheus
 	otelHandler := otelhttp.NewHandler(gateway, "gateway-request")
@@ -398,8 +403,9 @@ func main() {
 		Handler: promHandler,
 	}
 
-	log.Println("Gateway service starting on :8080")
+	logger.Info("Gateway service starting", "port", ":8080")
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatalf("Gateway server failed: %v", err)
+		logger.Error("Gateway server failed", "error", err)
+		os.Exit(1)
 	}
 }

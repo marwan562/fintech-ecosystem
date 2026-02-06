@@ -1,0 +1,166 @@
+# Default values for sapliy-fintech.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: sapliy/fintech-ecosystem
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  runAsNonRoot: true
+  runAsUser: 1000
+  capabilities:
+    drop:
+    - ALL
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Infrastructure Services
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "sapliy123"
+    username: "sapliy"
+    database: "sapliy"
+  primary:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      size: 4Gi
+
+kafka:
+  enabled: true
+  persistence:
+    enabled: true
+    size: 8Gi
+  zookeeper:
+    persistence:
+      enabled: true
+      size: 4Gi
+
+# Application Configuration
+auth:
+  service:
+    port: 8081
+    resources:
+      limits:
+        cpu: 300m
+        memory: 256Mi
+      requests:
+        cpu: 150m
+        memory: 128Mi
+
+payments:
+  service:
+    port: 8082
+    resources:
+      limits:
+        cpu: 300m
+        memory: 256Mi
+      requests:
+        cpu: 150m
+        memory: 128Mi
+
+ledger:
+  service:
+    port: 8083
+    resources:
+      limits:
+        cpu: 300m
+        memory: 256Mi
+      requests:
+        cpu: 150m
+        memory: 128Mi
+
+gateway:
+  service:
+    port: 8080
+    type: LoadBalancer
+    resources:
+      limits:
+        cpu: 400m
+        memory: 256Mi
+      requests:
+        cpu: 200m
+        memory: 128Mi
+
+# Monitoring
+prometheus:
+  enabled: true
+  service:
+    port: 9090
+
+grafana:
+  enabled: true
+  service:
+    port: 3000
+  adminPassword: "admin123"
+
+# Ingress
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: sapliy.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# ConfigMaps and Secrets
+config:
+  logLevel: "info"
+  environment: "production"
+
+secrets:
+  jwtSecret: "your-jwt-secret-here"
+  apiKeySecret: "your-api-key-secret-here"

@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -25,6 +24,8 @@ import (
 )
 
 func main() {
+	logger := observability.NewLogger("ledger-service")
+
 	dsn := os.Getenv("DB_DSN")
 	if dsn == "" {
 		dsn = "postgres://user:password@127.0.0.1:5435/ledger?sslmode=disable"
@@ -32,19 +33,20 @@ func main() {
 
 	db, err := database.Connect(dsn)
 	if err != nil {
-		log.Printf("Warning: Database connection failed: %v", err)
+		logger.Warn("Database connection failed", "error", err)
 	} else {
-		log.Println("Database connection established")
+		logger.Info("Database connection established")
 
 		// Run automated migrations
 		if err := database.Migrate(db, "ledger", "migrations/ledger"); err != nil {
-			log.Fatalf("Failed to run migrations: %v", err)
+			logger.Error("Failed to run migrations", "error", err)
+			os.Exit(1)
 		}
 	}
 	if db != nil {
 		defer func() {
 			if err := db.Close(); err != nil {
-				log.Printf("Failed to close DB: %v", err)
+				logger.Error("Failed to close DB", "error", err)
 			}
 		}()
 	}
@@ -58,7 +60,7 @@ func main() {
 		Addr: redisAddr,
 	})
 	if err := rdb.Ping(context.Background()).Err(); err != nil {
-		log.Printf("Warning: Redis connection failed in Ledger: %v", err)
+		logger.Warn("Redis connection failed in Ledger", "error", err)
 	}
 
 	// Layered Architecture Setup
@@ -75,11 +77,11 @@ func main() {
 		Environment:    "production",
 	})
 	if err != nil {
-		log.Printf("Failed to init tracer: %v", err)
+		logger.Error("Failed to init tracer", "error", err)
 	} else {
 		defer func() {
 			if err := shutdown(context.Background()); err != nil {
-				log.Printf("Failed to shutdown tracer: %v", err)
+				logger.Error("Failed to shutdown tracer", "error", err)
 			}
 		}()
 	}
@@ -124,30 +126,35 @@ func main() {
 	mux.HandleFunc("/transactions", handler.RecordTransaction)
 	mux.HandleFunc("/bulk-transactions", handler.BulkRecordTransactions)
 
-	log.Println("Ledger service HTTP starting on :8083")
+	port := ":8083"
+	logger.Info("Ledger service HTTP starting", "port", port)
 
 	// Wrap handler with OpenTelemetry and Prometheus
 	otelHandler := otelhttp.NewHandler(mux, "ledger-request")
 	promHandler := monitoring.PrometheusMiddleware(otelHandler)
 
 	go func() {
-		if err := http.ListenAndServe(":8083", promHandler); err != nil {
-			log.Fatalf("HTTP server failed: %v", err)
+		if err := http.ListenAndServe(port, promHandler); err != nil {
+			logger.Error("HTTP server failed", "error", err)
+			os.Exit(1)
 		}
 	}()
 
 	// Start gRPC Server
-	lis, err := net.Listen("tcp", ":50052")
+	grpcPort := ":50052"
+	lis, err := net.Listen("tcp", grpcPort)
 	if err != nil {
-		log.Fatalf("failed to listen for gRPC: %v", err)
+		logger.Error("failed to listen for gRPC", "error", err)
+		os.Exit(1)
 	}
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(monitoring.UnaryServerInterceptor("ledger")),
 	)
 	pb.RegisterLedgerServiceServer(s, NewLedgerGRPCServer(service))
 
-	log.Println("Ledger service gRPC starting on :50052")
+	logger.Info("Ledger service gRPC starting", "port", grpcPort)
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("gRPC server failed: %v", err)
+		logger.Error("gRPC server failed", "error", err)
+		os.Exit(1)
 	}
 }
