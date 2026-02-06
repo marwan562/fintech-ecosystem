@@ -26,7 +26,6 @@ payments/
 ledger/
 events/
 flow-runner/
-flow-service/
 fintech-cli/
 sapliy-cli/
 fintech-ecosystem/
