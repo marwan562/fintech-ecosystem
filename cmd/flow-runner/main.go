@@ -201,6 +201,27 @@ func processStreamMessage(ctx context.Context, stream string, msg redis.XMessage
 		eventID = msg.ID
 	}
 
+	// Create domain event
+	domainEvent := &domain.Event{
+		ID:             eventID,
+		Type:           eventType,
+		ZoneID:         zoneID,
+		OrgID:          envelope.OrgID,
+		Meta:           envelope.Meta,
+		IdempotencyKey: envelope.IdempotencyKey,
+		CreatedAt:      time.Now(), // approximate
+	}
+
+	if payloadJSON, err := json.Marshal(payload); err == nil {
+		domainEvent.Data = payloadJSON
+	}
+
+	// Persist event to Postgres
+	if err := repo.CreateEvent(ctx, domainEvent); err != nil {
+		// Log error but continue (don't block execution for metrics/logging failures)
+		log.Printf("Failed to persist event %s: %v", eventID, err)
+	}
+
 	event := map[string]interface{}{
 		"event_id":        eventID,
 		"zone_id":         zoneID,

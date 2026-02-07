@@ -114,9 +114,10 @@ func (r *SQLRepository) BulkUpdateFlowsEnabled(ctx context.Context, ids []string
 // Event methods
 
 func (r *SQLRepository) CreateEvent(ctx context.Context, event *domain.Event) error {
+	metaJSON, _ := json.Marshal(event.Meta)
 	_, err := r.db.ExecContext(ctx,
-		"INSERT INTO events (id, type, zone_id, data, created_at) VALUES ($1, $2, $3, $4, $5)",
-		event.ID, event.Type, event.ZoneID, event.Data, event.CreatedAt)
+		"INSERT INTO events (id, type, zone_id, org_id, data, meta, idempotency_key, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+		event.ID, event.Type, event.ZoneID, event.OrgID, event.Data, metaJSON, event.IdempotencyKey, event.CreatedAt)
 	return err
 }
 

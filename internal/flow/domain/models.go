@@ -83,11 +83,14 @@ type ExecutionStep struct {
 
 // Event represents a business event that can trigger flows
 type Event struct {
-	ID        string          `json:"id"`
-	Type      string          `json:"type"`
-	ZoneID    string          `json:"zone_id"`
-	Data      json.RawMessage `json:"data"`
-	CreatedAt time.Time       `json:"created_at"`
+	ID             string            `json:"id"`
+	Type           string            `json:"type"`
+	ZoneID         string            `json:"zone_id"`
+	OrgID          string            `json:"org_id"`
+	Data           json.RawMessage   `json:"data"` // Payload
+	Meta           map[string]string `json:"meta"`
+	IdempotencyKey string            `json:"idempotency_key"`
+	CreatedAt      time.Time         `json:"created_at"`
 }
 
 type Repository interface {
