@@ -46,10 +46,11 @@ func (r *FlowRunner) registerDefaultHandlers() {
 
 func (r *FlowRunner) Execute(ctx context.Context, flow *Flow, input map[string]interface{}) error {
 	exec := &FlowExecution{
-		ID:        fmt.Sprintf("exec_%d", time.Now().UnixNano()),
-		FlowID:    flow.ID,
-		Status:    ExecutionRunning,
-		StartedAt: time.Now(),
+		ID:          fmt.Sprintf("exec_%d", time.Now().UnixNano()),
+		FlowID:      flow.ID,
+		FlowVersion: flow.Version,
+		Status:      ExecutionRunning,
+		StartedAt:   time.Now(),
 	}
 	inputBytes, _ := json.Marshal(input)
 	exec.Input = inputBytes

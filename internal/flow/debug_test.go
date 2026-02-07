@@ -97,6 +97,18 @@ func (m *MockFlowRepository) GetEventByID(ctx context.Context, id string) (*doma
 	return nil, fmt.Errorf("event not found")
 }
 
+func (m *MockFlowRepository) CreateFlowVersion(ctx context.Context, version *domain.FlowVersion) error {
+	return nil
+}
+
+func (m *MockFlowRepository) GetFlowVersions(ctx context.Context, flowID string) ([]*domain.FlowVersion, error) {
+	return nil, nil
+}
+
+func (m *MockFlowRepository) GetFlowVersion(ctx context.Context, flowID string, version int) (*domain.FlowVersion, error) {
+	return nil, nil
+}
+
 func TestDebugSessionManager(t *testing.T) {
 	manager := domain.NewDebugSessionManager()
 	ctx := context.Background()

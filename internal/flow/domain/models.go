@@ -29,6 +29,7 @@ type Flow struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Enabled     bool      `json:"enabled"`
+	Version     int       `json:"version"` // Current version
 	Nodes       []Node    `json:"nodes"`
 	Edges       []Edge    `json:"edges"`
 	CreatedAt   time.Time `json:"created_at"`
@@ -62,6 +63,7 @@ const (
 type FlowExecution struct {
 	ID            string          `json:"id"`
 	FlowID        string          `json:"flow_id"`
+	FlowVersion   int             `json:"flow_version"`
 	TriggerID     string          `json:"trigger_id"` // Reference to the event that started it
 	Status        ExecutionStatus `json:"status"`
 	CurrentNodeID string          `json:"current_node_id,omitempty"` // For resuming
@@ -108,7 +110,21 @@ type Repository interface {
 	GetPastEvents(ctx context.Context, zoneID string, limit, offset int) ([]*Event, error)
 	GetEventByID(ctx context.Context, id string) (*Event, error)
 
+	// Flow Versioning
+	CreateFlowVersion(ctx context.Context, version *FlowVersion) error
+	GetFlowVersions(ctx context.Context, flowID string) ([]*FlowVersion, error)
+	GetFlowVersion(ctx context.Context, flowID string, version int) (*FlowVersion, error)
+
 	BulkUpdateFlowsEnabled(ctx context.Context, ids []string, enabled bool) error
+}
+
+type FlowVersion struct {
+	ID        int       `json:"id"`
+	FlowID    string    `json:"flow_id"`
+	Version   int       `json:"version"`
+	Nodes     []Node    `json:"nodes"`
+	Edges     []Edge    `json:"edges"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 // Errors
