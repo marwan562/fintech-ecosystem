@@ -347,8 +347,168 @@ func (wr *WebhookReplayer) BulkReplayEvents(w http.ResponseWriter, r *http.Reque
 	})
 }
 
+// Flow CRUD Handlers
+
+func (s *FlowServer) CreateFlow(w http.ResponseWriter, r *http.Request) {
+	var flow domain.Flow
+	if err := json.NewDecoder(r.Body).Decode(&flow); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if flow.ID == "" {
+		flow.ID = fmt.Sprintf("flow_%d", time.Now().UnixNano())
+	}
+	flow.CreatedAt = time.Now()
+	flow.UpdatedAt = time.Now()
+
+	if err := s.repo.CreateFlow(r.Context(), &flow); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to create flow: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(flow)
+}
+
+func (s *FlowServer) GetFlow(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	flowID := vars["flowId"]
+
+	flow, err := s.repo.GetFlow(r.Context(), flowID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Flow not found: %v", err), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(flow)
+}
+
+func (s *FlowServer) ListFlows(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	zoneID := vars["zoneId"]
+
+	flows, err := s.repo.ListFlows(r.Context(), zoneID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to list flows: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"flows": flows,
+		"count": len(flows),
+	})
+}
+
+func (s *FlowServer) UpdateFlow(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	flowID := vars["flowId"]
+
+	// Get existing flow
+	existing, err := s.repo.GetFlow(r.Context(), flowID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Flow not found: %v", err), http.StatusNotFound)
+		return
+	}
+
+	// Decode update
+	var update domain.Flow
+	if err := json.NewDecoder(r.Body).Decode(&update); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Preserve immutable fields
+	update.ID = existing.ID
+	update.CreatedAt = existing.CreatedAt
+	update.UpdatedAt = time.Now()
+
+	if err := s.repo.UpdateFlow(r.Context(), &update); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to update flow: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(update)
+}
+
+func (s *FlowServer) DeleteFlow(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	flowID := vars["flowId"]
+
+	// Use BulkUpdateFlowsEnabled to disable, as there's no DeleteFlow in Repository
+	if err := s.repo.BulkUpdateFlowsEnabled(r.Context(), []string{flowID}, false); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to delete flow: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (s *FlowServer) EnableFlow(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	flowID := vars["flowId"]
+
+	if err := s.repo.BulkUpdateFlowsEnabled(r.Context(), []string{flowID}, true); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to enable flow: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Flow enabled", "flowId": flowID})
+}
+
+func (s *FlowServer) DisableFlow(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	flowID := vars["flowId"]
+
+	if err := s.repo.BulkUpdateFlowsEnabled(r.Context(), []string{flowID}, false); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to disable flow: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Flow disabled", "flowId": flowID})
+}
+
+func (s *FlowServer) BulkEnableFlows(w http.ResponseWriter, r *http.Request) {
+	var req struct {
+		FlowIDs []string `json:"flowIds"`
+		Enabled bool     `json:"enabled"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if err := s.repo.BulkUpdateFlowsEnabled(r.Context(), req.FlowIDs, req.Enabled); err != nil {
+		http.Error(w, fmt.Sprintf("Failed to update flows: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "Flows updated",
+		"flowIds": req.FlowIDs,
+		"enabled": req.Enabled,
+	})
+}
+
 func setupRoutes(server *FlowServer, replayer *WebhookReplayer) *mux.Router {
 	r := mux.NewRouter()
+
+	// Flow CRUD API routes
+	r.HandleFunc("/api/v1/flows", server.CreateFlow).Methods("POST")
+	r.HandleFunc("/api/v1/flows/{flowId}", server.GetFlow).Methods("GET")
+	r.HandleFunc("/api/v1/flows/{flowId}", server.UpdateFlow).Methods("PUT")
+	r.HandleFunc("/api/v1/flows/{flowId}", server.DeleteFlow).Methods("DELETE")
+	r.HandleFunc("/api/v1/zones/{zoneId}/flows", server.ListFlows).Methods("GET")
+	r.HandleFunc("/api/v1/flows/{flowId}/enable", server.EnableFlow).Methods("POST")
+	r.HandleFunc("/api/v1/flows/{flowId}/disable", server.DisableFlow).Methods("POST")
+	r.HandleFunc("/api/v1/flows/bulk", server.BulkEnableFlows).Methods("POST")
 
 	// Debug API routes
 	r.HandleFunc("/api/v1/flows/{flowId}/zones/{zoneId}/debug", server.StartDebugSession).Methods("POST")
