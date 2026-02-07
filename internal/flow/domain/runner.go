@@ -72,7 +72,13 @@ func (r *FlowRunner) Execute(ctx context.Context, flow *Flow, input map[string]i
 		return fmt.Errorf("no trigger node found in flow %s", flow.ID)
 	}
 
-	return r.executeNode(ctx, flow, startNode, input, exec)
+	if err := r.executeNode(ctx, flow, startNode, input, exec); err != nil {
+		return err
+	}
+
+	exec.Status = ExecutionCompleted
+	exec.EndedAt = time.Now()
+	return r.repo.UpdateExecution(ctx, exec)
 }
 
 func (r *FlowRunner) executeNode(ctx context.Context, flow *Flow, node *Node, input map[string]interface{}, exec *FlowExecution) error {

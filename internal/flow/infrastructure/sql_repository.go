@@ -122,17 +122,48 @@ func (r *SQLRepository) UpdateFlow(ctx context.Context, flow *domain.Flow) error
 
 func (r *SQLRepository) CreateExecution(ctx context.Context, exec *domain.FlowExecution) error {
 	stepsJSON, _ := json.Marshal(exec.Steps)
+	stepsStr := string(stepsJSON)
+	if stepsStr == "null" || len(stepsStr) == 0 {
+		stepsStr = "[]"
+	}
+
+	// Ensure valid JSON strings
+	inputStr := string(exec.Input)
+	if len(inputStr) == 0 {
+		inputStr = "{}"
+	}
+
+	metadataStr := string(exec.Metadata)
+	if len(metadataStr) == 0 {
+		metadataStr = "{}"
+	}
+
 	_, err := r.db.ExecContext(ctx,
 		"INSERT INTO flow_executions (id, flow_id, flow_version, status, current_node_id, input, steps, metadata, started_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
-		exec.ID, exec.FlowID, exec.FlowVersion, exec.Status, exec.CurrentNodeID, exec.Input, stepsJSON, exec.Metadata, exec.StartedAt)
+		exec.ID, exec.FlowID, exec.FlowVersion, exec.Status, exec.CurrentNodeID, inputStr, stepsStr, metadataStr, exec.StartedAt)
 	return err
 }
 
 func (r *SQLRepository) UpdateExecution(ctx context.Context, exec *domain.FlowExecution) error {
 	stepsJSON, _ := json.Marshal(exec.Steps)
+	stepsStr := string(stepsJSON)
+	if stepsStr == "null" || len(stepsStr) == 0 {
+		stepsStr = "[]"
+	}
+
+	outputStr := string(exec.Output)
+	if len(outputStr) == 0 {
+		outputStr = "{}"
+	}
+
+	metadataStr := string(exec.Metadata)
+	if len(metadataStr) == 0 {
+		metadataStr = "{}"
+	}
+
 	_, err := r.db.ExecContext(ctx,
 		"UPDATE flow_executions SET status = $1, current_node_id = $2, output = $3, steps = $4, metadata = $5, ended_at = $6 WHERE id = $7",
-		exec.Status, exec.CurrentNodeID, exec.Output, stepsJSON, exec.Metadata, exec.EndedAt, exec.ID)
+		exec.Status, exec.CurrentNodeID, outputStr, stepsStr, metadataStr, exec.EndedAt, exec.ID)
 	return err
 }
 
