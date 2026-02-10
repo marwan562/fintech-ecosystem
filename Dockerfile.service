@@ -27,9 +27,7 @@ RUN find proto -name "*.proto" | while read -r file; do \
 
 # Build the specific service
 ARG SERVICE_NAME
-RUN --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=cache,target=/go/pkg/mod \
-    go build -o main ./cmd/${SERVICE_NAME}
+RUN go build -o main ./cmd/${SERVICE_NAME}
 
 # Run stage
 FROM debian:bookworm-slim

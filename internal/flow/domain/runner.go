@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+// ErrExecutionPaused is a sentinel error used to signal that an execution
+// has been paused (e.g. by an approval node). It propagates up the call
+// stack to prevent Execute() from overwriting the paused status.
+var ErrExecutionPaused = fmt.Errorf("execution paused")
+
 type NodeHandler interface {
 	Execute(ctx context.Context, node *Node, input map[string]interface{}) (map[string]interface{}, error)
 }
@@ -73,6 +78,9 @@ func (r *FlowRunner) Execute(ctx context.Context, flow *Flow, input map[string]i
 	}
 
 	if err := r.executeNode(ctx, flow, startNode, input, exec); err != nil {
+		if err == ErrExecutionPaused {
+			return nil // Execution paused successfully; status already persisted
+		}
 		return err
 	}
 
@@ -115,7 +123,10 @@ func (r *FlowRunner) executeNode(ctx context.Context, flow *Flow, node *Node, in
 			log.Printf("Node %s paused execution", node.ID)
 			exec.Status = ExecutionPaused
 			exec.Steps[len(exec.Steps)-1].Status = ExecutionPaused
-			return r.repo.UpdateExecution(ctx, exec)
+			if dbErr := r.repo.UpdateExecution(ctx, exec); dbErr != nil {
+				return dbErr
+			}
+			return ErrExecutionPaused
 		}
 		log.Printf("Node %s failed: %v", node.ID, err)
 		exec.Steps[len(exec.Steps)-1].Status = ExecutionFailed
@@ -219,6 +230,8 @@ func (r *FlowRunner) Resume(ctx context.Context, execID string, overrides map[st
 		}
 	}
 
+	exec.Status = ExecutionCompleted
+	exec.EndedAt = time.Now()
 	return r.repo.UpdateExecution(ctx, exec)
 }
 
