@@ -240,7 +240,7 @@ func (r *Router) getTemplateID(eventType EventType) string {
 	case EventRefundCompleted:
 		return "payment_refund"
 	case EventUserRegistered:
-		return "welcome"
+		return TemplateVerification
 	case EventPasswordReset:
 		return "otp"
 	default:

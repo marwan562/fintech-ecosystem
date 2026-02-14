@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -62,7 +63,9 @@ func (s *AuthService) CreateUser(ctx context.Context, email, passwordHash string
 				"link":    fmt.Sprintf("%s/verify-email?token=%s", baseURL, token),
 			},
 		}
-		_ = s.publisher.Publish(ctx, "", event)
+		if err := s.publisher.Publish(ctx, "", event); err != nil {
+			log.Printf("Failed to publish UserRegistered event: %v", err)
+		}
 	}
 
 	return user, nil

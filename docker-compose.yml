@@ -102,6 +102,7 @@ services:
       - LEDGER_GRPC_ADDR=ledger:50052
       - MIGRATIONS_PATH=/app/migrations/auth
       - REDIS_ADDR=redis:6379
+      - KAFKA_BROKERS=redpanda:29092
       - ENABLE_DEBUG_ENDPOINTS=true
       - APP_BASE_URL=http://localhost:3000
     ports:
