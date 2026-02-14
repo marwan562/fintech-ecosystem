@@ -102,8 +102,11 @@ func main() {
 	// Initialize event router
 	router := notification.NewRouter(rabbitClient)
 
+	// Initialize Email Service
+	emailService := notification.NewEmailService(os.Getenv("RESEND_API_KEY"))
+
 	// Start notification workers (consume from RabbitMQ)
-	startWorkers(rabbitClient, registry, rdb, repo)
+	startWorkers(rabbitClient, registry, rdb, repo, emailService)
 
 	// Start Metrics Server
 	monitoring.StartMetricsServer(":8084")
@@ -149,10 +152,10 @@ func main() {
 	select {}
 }
 
-func startWorkers(rabbitClient *messaging.RabbitMQClient, registry *notification.DriverRegistry, rdb *redis.Client, repo *notification.Repository) {
+func startWorkers(rabbitClient *messaging.RabbitMQClient, registry *notification.DriverRegistry, rdb *redis.Client, repo *notification.Repository, emailService *notification.EmailService) {
 	// Email worker
 	emailDriver, _ := registry.Get(notification.Email)
-	emailWorker := notification.NewWorker(notification.Email, emailDriver, rdb)
+	emailWorker := notification.NewWorker(notification.Email, emailDriver, rdb, emailService)
 	rabbitClient.Consume("email.notifications", func(body []byte) error {
 		err := emailWorker.ProcessTask(context.Background(), body)
 		if err != nil {
@@ -165,7 +168,7 @@ func startWorkers(rabbitClient *messaging.RabbitMQClient, registry *notification
 
 	// SMS worker
 	smsDriver, _ := registry.Get(notification.SMS)
-	smsWorker := notification.NewWorker(notification.SMS, smsDriver, rdb)
+	smsWorker := notification.NewWorker(notification.SMS, smsDriver, rdb, nil)
 	rabbitClient.Consume("sms.notifications", func(body []byte) error {
 		err := smsWorker.ProcessTask(context.Background(), body)
 		if err != nil {
@@ -178,7 +181,7 @@ func startWorkers(rabbitClient *messaging.RabbitMQClient, registry *notification
 
 	// Web push worker
 	webDriver, _ := registry.Get(notification.Web)
-	webWorker := notification.NewWorker(notification.Web, webDriver, rdb)
+	webWorker := notification.NewWorker(notification.Web, webDriver, rdb, nil)
 	rabbitClient.Consume("web.notifications", func(body []byte) error {
 		err := webWorker.ProcessTask(context.Background(), body)
 		if err != nil {

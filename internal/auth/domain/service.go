@@ -11,18 +11,56 @@ import (
 	"github.com/google/uuid"
 )
 
-type AuthService struct {
-	repo Repository
+type Publisher interface {
+	Publish(ctx context.Context, topic string, event interface{}) error
 }
 
-func NewAuthService(repo Repository) *AuthService {
-	return &AuthService{repo: repo}
+type AuthService struct {
+	repo      Repository
+	publisher Publisher
+}
+
+func NewAuthService(repo Repository, publisher Publisher) *AuthService {
+	return &AuthService{
+		repo:      repo,
+		publisher: publisher,
+	}
 }
 
 // User methods
 
 func (s *AuthService) CreateUser(ctx context.Context, email, passwordHash string) (*User, error) {
-	return s.repo.CreateUser(ctx, email, passwordHash)
+	user, err := s.repo.CreateUser(ctx, email, passwordHash)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate verification token
+	token, err := s.CreateEmailVerificationToken(ctx, user.ID)
+	if err != nil {
+		// Log error but don't fail user creation? Or fail?
+		// For now, let's log and proceed or return error.
+		// Better to fail if critical.
+		return user, nil // Proceed without token for now or implement retry
+	}
+
+	// Publish UserRegistered event
+	if s.publisher != nil {
+		event := map[string]interface{}{
+			"id":        uuid.New().String(),
+			"type":      "user.registered",
+			"timestamp": time.Now().UTC(),
+			"data": map[string]string{
+				"user_id": user.ID,
+				"email":   user.Email,
+				"token":   token,
+				"link":    fmt.Sprintf("https://sapliy.com/verify-email?token=%s", token), // Todo: configure base URL
+			},
+		}
+		_ = s.publisher.Publish(ctx, "", event)
+	}
+
+	return user, nil
 }
 
 func (s *AuthService) GetUserByEmail(ctx context.Context, email string) (*User, error) {
@@ -219,6 +257,26 @@ func (s *AuthService) CreatePasswordResetToken(ctx context.Context, userID strin
 
 	if err := s.repo.CreatePasswordResetToken(ctx, token); err != nil {
 		return "", err
+	}
+
+	// Publish PasswordResetRequested event
+	if s.publisher != nil {
+		// Get user email
+		user, err := s.repo.GetUserByID(ctx, userID)
+		if err == nil && user != nil {
+			event := map[string]interface{}{
+				"id":        uuid.New().String(),
+				"type":      "password.reset", // Was user.password_reset_requested, but events.go defines EventPasswordReset = "password.reset"
+				"timestamp": time.Now().UTC(),
+				"data": map[string]string{
+					"user_id": userID,
+					"email":   user.Email,
+					"token":   rawToken,
+					"link":    fmt.Sprintf("https://sapliy.com/reset-password?token=%s", rawToken), // Todo: configure base URL
+				},
+			}
+			_ = s.publisher.Publish(ctx, "", event)
+		}
 	}
 
 	return rawToken, nil

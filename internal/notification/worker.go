@@ -18,19 +18,21 @@ import (
 
 // Worker processes notification tasks from RabbitMQ
 type Worker struct {
-	channel  Channel
-	driver   Driver
-	redis    *redis.Client
-	maxRetry int
+	channel      Channel
+	driver       Driver
+	redis        *redis.Client
+	maxRetry     int
+	emailService *EmailService
 }
 
 // NewWorker creates a new notification worker
-func NewWorker(channel Channel, driver Driver, redisClient *redis.Client) *Worker {
+func NewWorker(channel Channel, driver Driver, redisClient *redis.Client, emailService *EmailService) *Worker {
 	return &Worker{
-		channel:  channel,
-		driver:   driver,
-		redis:    redisClient,
-		maxRetry: 3,
+		channel:      channel,
+		driver:       driver,
+		redis:        redisClient,
+		maxRetry:     3,
+		emailService: emailService,
 	}
 }
 
@@ -53,22 +55,37 @@ func (w *Worker) ProcessTask(ctx context.Context, body []byte) error {
 		}
 	}
 
-	// Render template
-	content, err := RenderTemplate(task.TemplateID, task.Data)
-	if err != nil {
-		log.Printf("Failed to render template: %v", err)
-		content = "Notification content unavailable"
-	}
+	// Check if this is an email task
+	if task.Channel == "email" && w.emailService != nil {
+		subject := GetEmailSubject(task.TemplateID)
+		htmlBody, err := RenderEmailTemplate(task.TemplateID, task.Data)
+		if err != nil {
+			log.Printf("Failed to render email template: %v", err)
+			return err
+		}
 
-	title := task.Data["Title"]
-	if title == "" {
-		title = "Notification"
-	}
+		if err := w.emailService.SendEmail(ctx, task.Recipient, subject, htmlBody); err != nil {
+			log.Printf("Failed to send email: %v", err)
+			return w.handleRetry(ctx, &task, err)
+		}
+	} else {
+		// Render template for other drivers
+		content, err := RenderTemplate(task.TemplateID, task.Data)
+		if err != nil {
+			log.Printf("Failed to render template: %v", err)
+			content = "Notification content unavailable"
+		}
 
-	// Send via driver
-	if err := w.driver.Send(ctx, task.Recipient, title, content); err != nil {
-		log.Printf("Failed to send notification: %v", err)
-		return w.handleRetry(ctx, &task, err)
+		title := task.Data["Title"]
+		if title == "" {
+			title = "Notification"
+		}
+
+		// Send via driver
+		if err := w.driver.Send(ctx, task.Recipient, title, content); err != nil {
+			log.Printf("Failed to send notification: %v", err)
+			return w.handleRetry(ctx, &task, err)
+		}
 	}
 
 	// Mark as sent (idempotency)

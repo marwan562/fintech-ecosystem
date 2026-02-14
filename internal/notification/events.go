@@ -63,6 +63,8 @@ type UserEventData struct {
 	Phone     string `json:"phone,omitempty"`
 	FirstName string `json:"first_name,omitempty"`
 	LastName  string `json:"last_name,omitempty"`
+	Link      string `json:"link,omitempty"`
+	Token     string `json:"token,omitempty"`
 }
 
 // WebhookDeliveryData contains webhook delivery task data

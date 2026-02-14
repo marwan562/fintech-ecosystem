@@ -49,7 +49,7 @@ func TestAuthHandler_Login(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mRepo := &domain.MockRepository{}
 			tt.mockSetup(mRepo)
-			service := domain.NewAuthService(mRepo)
+			service := domain.NewAuthService(mRepo, nil)
 			h := &AuthHandler{service: service}
 
 			req := httptest.NewRequest("POST", "/login", strings.NewReader(tt.reqBody))
@@ -95,7 +95,7 @@ func TestAuthHandler_Register(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mRepo := &domain.MockRepository{}
 			tt.mockSetup(mRepo)
-			service := domain.NewAuthService(mRepo)
+			service := domain.NewAuthService(mRepo, nil)
 			h := &AuthHandler{service: service}
 
 			req := httptest.NewRequest("POST", "/register", strings.NewReader(tt.reqBody))

@@ -214,6 +214,17 @@ func (r *Router) extractTemplateData(event *Event) map[string]string {
 			data["UserID"] = userData.UserID
 			data["Recipient"] = userData.Email
 			data["UserName"] = userData.FirstName + " " + userData.LastName
+			data["link"] = userData.Link
+			data["token"] = userData.Token
+		}
+	case EventPasswordReset:
+		if userData, err := event.ParseUserEventData(); err == nil {
+			data["UserID"] = userData.UserID
+			data["Recipient"] = userData.Email
+			data["link"] = userData.Link
+			data["token"] = userData.Token
+			// For templates expecting 'Code', map token to it if it's short/OTP
+			data["Code"] = userData.Token
 		}
 	}
 

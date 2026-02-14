@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -91,9 +92,21 @@ func main() {
 		log.Printf("Warning: Redis connection failed in Auth: %v", err)
 	}
 
+	// Initialize Kafka Publisher
+	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
+	if kafkaBrokers == "" {
+		kafkaBrokers = "localhost:9092"
+	}
+	kafkaTopic := os.Getenv("KAFKA_TOPIC")
+	if kafkaTopic == "" {
+		kafkaTopic = "payment_events" // Default topic used by notification service
+	}
+	publisher := infrastructure.NewKafkaPublisher(strings.Split(kafkaBrokers, ","), kafkaTopic)
+	defer publisher.Close()
+
 	sqlRepo := infrastructure.NewSQLRepository(db)
 	cachedRepo := infrastructure.NewCachedRepository(sqlRepo, rdb)
-	authService := domain.NewAuthService(cachedRepo)
+	authService := domain.NewAuthService(cachedRepo, publisher)
 
 	zoneSQLRepo := zoneInfra.NewSQLRepository(db)
 	zoneRepo := zoneInfra.NewCachedRepository(zoneSQLRepo, rdb)
