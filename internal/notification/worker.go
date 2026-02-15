@@ -108,6 +108,9 @@ func (w *Worker) handleRetry(ctx context.Context, task *NotificationTask, origin
 	delay := time.Duration(math.Pow(2, float64(task.RetryCount))) * time.Second
 	log.Printf("Task %s will retry in %v (attempt %d/%d)", task.ID, delay, task.RetryCount, task.MaxRetries)
 
+	// Since we don't have a delayed queue, sleep here to throttle retries
+	time.Sleep(delay)
+
 	// In a real system, you'd republish to a delayed queue or use RabbitMQ's delayed message plugin
 	return originalErr
 }

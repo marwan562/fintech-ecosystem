@@ -265,8 +265,8 @@ services:
       - REDIS_ADDR=redis:6379
       - DATABASE_URL=postgres://user:password@postgres:5432/microservices?sslmode=disable
       - RESEND_API_KEY=${RESEND_API_KEY}
-      - FROM_EMAIL="Sapliy <onboarding@resend.dev>"
-      - CONTACT_EMAIL=${CONTACT_EMAIL}
+      - FROM_EMAIL=${FROM_EMAIL}
+
     ports:
       - "8084:8084"
     depends_on:
