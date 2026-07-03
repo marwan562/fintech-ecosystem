@@ -8,9 +8,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/sapliy/fintech-ecosystem/internal/flow"
-	"github.com/sapliy/fintech-ecosystem/internal/flow/domain"
-	"github.com/sapliy/fintech-ecosystem/internal/flow/testutil"
+	"github.com/sapliy/sapliy-core/internal/flow"
+	"github.com/sapliy/sapliy-core/internal/flow/domain"
+	"github.com/sapliy/sapliy-core/internal/flow/testutil"
 )
 
 func TestFlowServer_StartDebugSession(t *testing.T) {

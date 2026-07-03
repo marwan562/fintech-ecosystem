@@ -70,8 +70,8 @@ graph TD
 ### 1. Run the stack
 
 ```bash
-git clone https://github.com/Sapliy/fintech-ecosystem.git
-cd fintech-ecosystem
+git clone https://github.com/Sapliy/sapliy-core.git
+cd sapliy-core
 docker-compose up --build -d
 ```
 
@@ -185,7 +185,7 @@ Get started quickly with our auto-generated, type-safe SDKs:
 - **[Go SDK](https://github.com/Sapliy/fintech-sdk-go)** — `go get github.com/sapliy/fintech-sdk-go`
 - **[Python SDK](https://github.com/Sapliy/fintech-sdk-python)** — `pip install sapliyio-fintech`
 
-Check out the [examples/](https://github.com/Sapliy/fintech-ecosystem/tree/main/examples) directory for real-world integration guides (e.g., E-commerce checkout, financial auditing).
+Check out the [examples/](https://github.com/Sapliy/sapliy-core/tree/main/examples) directory for real-world integration guides (e.g., E-commerce checkout, financial auditing).
 
 ---
 

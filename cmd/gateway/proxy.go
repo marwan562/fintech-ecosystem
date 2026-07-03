@@ -5,7 +5,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
 )
 
 func (h *GatewayHandler) proxyRequest(target string, w http.ResponseWriter, r *http.Request) {

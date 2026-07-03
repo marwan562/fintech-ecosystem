@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/sapliy/fintech-ecosystem/internal/wallet/domain"
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
-	"github.com/sapliy/fintech-ecosystem/pkg/authutil"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
-	pb "github.com/sapliy/fintech-ecosystem/proto/wallet"
+	"github.com/sapliy/sapliy-core/internal/wallet/domain"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/authutil"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
+	pb "github.com/sapliy/sapliy-core/proto/wallet"
 )
 
 type WalletHandler struct {

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/sapliy/fintech-ecosystem/internal/zone"
-	"github.com/sapliy/fintech-ecosystem/internal/zone/domain"
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
+	"github.com/sapliy/sapliy-core/internal/zone"
+	"github.com/sapliy/sapliy-core/internal/zone/domain"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
 )
 
 type ZoneHandler struct {

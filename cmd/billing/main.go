@@ -14,8 +14,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/sapliy/fintech-ecosystem/internal/billing/infrastructure"
-	"github.com/sapliy/fintech-ecosystem/internal/billing/service"
+	"github.com/sapliy/sapliy-core/internal/billing/infrastructure"
+	"github.com/sapliy/sapliy-core/internal/billing/service"
 )
 
 func main() {

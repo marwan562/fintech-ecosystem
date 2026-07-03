@@ -7,13 +7,13 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/sapliy/fintech-ecosystem/internal/auth/domain"
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
-	"github.com/sapliy/fintech-ecosystem/pkg/apikey"
-	"github.com/sapliy/fintech-ecosystem/pkg/authutil"
-	"github.com/sapliy/fintech-ecosystem/pkg/bcryptutil"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
-	"github.com/sapliy/fintech-ecosystem/pkg/jwtutil"
+	"github.com/sapliy/sapliy-core/internal/auth/domain"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/apikey"
+	"github.com/sapliy/sapliy-core/pkg/authutil"
+	"github.com/sapliy/sapliy-core/pkg/bcryptutil"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
+	"github.com/sapliy/sapliy-core/pkg/jwtutil"
 )
 
 // AuthHandler holds dependencies for authentication endpoints.

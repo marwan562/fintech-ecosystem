@@ -334,7 +334,7 @@ const file_proto_payments_payments_proto_rawDesc = "" +
 	"\x0ePaymentService\x12u\n" +
 	"\x13CreatePaymentIntent\x12$.payments.CreatePaymentIntentRequest\x1a\x17.payments.PaymentIntent\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/v1/payments/intents\x12\x84\x01\n" +
 	"\x14ConfirmPaymentIntent\x12%.payments.ConfirmPaymentIntentRequest\x1a\x17.payments.PaymentIntent\",\x82\xd3\xe4\x93\x02&:\x01*\"!/v1/payments/intents/{id}/confirm\x12\x81\x01\n" +
-	"\x13RefundPaymentIntent\x12$.payments.RefundPaymentIntentRequest\x1a\x17.payments.PaymentIntent\"+\x82\xd3\xe4\x93\x02%:\x01*\" /v1/payments/intents/{id}/refundB4Z2github.com/sapliy/fintech-ecosystem/proto/paymentsb\x06proto3"
+	"\x13RefundPaymentIntent\x12$.payments.RefundPaymentIntentRequest\x1a\x17.payments.PaymentIntent\"+\x82\xd3\xe4\x93\x02%:\x01*\" /v1/payments/intents/{id}/refundB4Z2github.com/sapliy/sapliy-core/proto/paymentsb\x06proto3"
 
 var (
 	file_proto_payments_payments_proto_rawDescOnce sync.Once

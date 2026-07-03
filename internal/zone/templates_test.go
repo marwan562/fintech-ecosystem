@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sapliy/fintech-ecosystem/internal/zone/domain"
+	"github.com/sapliy/sapliy-core/internal/zone/domain"
 )
 
 func TestTemplateService_List(t *testing.T) {

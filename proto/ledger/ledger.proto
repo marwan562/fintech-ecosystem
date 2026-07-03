@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package ledger;
 
-option go_package = "github.com/sapliy/fintech-ecosystem/proto/ledger";
+option go_package = "github.com/sapliy/sapliy-core/proto/ledger";
 
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";

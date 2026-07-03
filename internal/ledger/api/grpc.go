@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sapliy/fintech-ecosystem/internal/ledger/domain"
-	pb "github.com/sapliy/fintech-ecosystem/proto/ledger"
+	"github.com/sapliy/sapliy-core/internal/ledger/domain"
+	pb "github.com/sapliy/sapliy-core/proto/ledger"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

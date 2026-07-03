@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/sapliy/fintech-ecosystem/pkg/observability"
+	"github.com/sapliy/sapliy-core/pkg/observability"
 )
 
 type Config struct {

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package zone;
 
-option go_package = "github.com/sapliy/fintech-ecosystem/proto/zone";
+option go_package = "github.com/sapliy/sapliy-core/proto/zone";
 
 import "google/api/annotations.proto";
 

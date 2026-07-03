@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:15-alpine
-    container_name: microservices_db
+    container_name: sapliy_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
@@ -21,7 +21,7 @@ services:
 
   payments_db:
     image: postgres:15-alpine
-    container_name: microservices_payments_db
+    container_name: sapliy_payments_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
@@ -41,7 +41,7 @@ services:
 
   ledger_db:
     image: postgres:15-alpine
-    container_name: microservices_ledger_db
+    container_name: sapliy_ledger_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
@@ -61,7 +61,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    container_name: microservices_redis
+    container_name: sapliy_redis
     ports:
       - "6379:6379"
     networks:
@@ -76,7 +76,7 @@ services:
   # Kafka (Redpanda)
   redpanda:
     image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-    container_name: microservices_redpanda
+    container_name: sapliy_redpanda
     command:
       - redpanda
       - start
@@ -108,7 +108,7 @@ services:
   # RabbitMQ
   rabbitmq:
     image: rabbitmq:3-management-alpine
-    container_name: microservices_rabbitmq
+    container_name: sapliy_rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -131,7 +131,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: auth
-    container_name: microservices_auth
+    container_name: sapliy_auth
     environment:
       - DB_DSN=postgres://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/microservices?sslmode=disable
       - API_KEY_HMAC_SECRET=${API_KEY_HMAC_SECRET}
@@ -160,7 +160,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: payments
-    container_name: microservices_payments
+    container_name: sapliy_payments
     environment:
       - DB_DSN=postgres://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@payments_db:5432/payments?sslmode=disable
       - REDIS_ADDR=redis:6379
@@ -181,7 +181,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: ledger
-    container_name: microservices_ledger
+    container_name: sapliy_ledger
     environment:
       - DB_DSN=postgres://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@ledger_db:5432/ledger?sslmode=disable
       - MIGRATIONS_PATH=/app/migrations/ledger
@@ -205,7 +205,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: wallet
-    container_name: microservices_wallet
+    container_name: sapliy_wallet
     environment:
       - LEDGER_GRPC_ADDR=ledger:50052
       - INTERNAL_SERVICE_TOKEN=${INTERNAL_SERVICE_TOKEN:-your_internal_grpc_token}
@@ -223,7 +223,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: gateway
-    container_name: microservices_gateway
+    container_name: sapliy_gateway
     # volume mount removed
     # command override removed
     environment:
@@ -257,7 +257,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: events
-    container_name: microservices_events
+    container_name: sapliy_events
     environment:
       - REDIS_ADDR=redis:6379
     ports:
@@ -274,7 +274,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: flow-service
-    container_name: microservices_flow_service
+    container_name: sapliy_flow_service
     environment:
       - DB_DSN=postgres://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/microservices?sslmode=disable
       - KAFKA_BROKERS=redpanda:29092
@@ -295,7 +295,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: flow-runner
-    container_name: microservices_flow_runner
+    container_name: sapliy_flow_runner
     environment:
       - DB_DSN=postgres://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@postgres:5432/microservices?sslmode=disable
       - KAFKA_BROKERS=redpanda:29092
@@ -314,7 +314,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: notifications
-    container_name: microservices_notifications
+    container_name: sapliy_notifications
     environment:
       - KAFKA_BROKERS=redpanda:29092
       - KAFKA_TOPIC=payment_events
@@ -345,7 +345,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: fraud
-    container_name: microservices_fraud
+    container_name: sapliy_fraud
     environment:
       - KAFKA_BROKERS=redpanda:29092
       - RABBITMQ_URL=amqp://${RABBITMQ_USER:-user}:${RABBITMQ_PASSWORD:-password}@rabbitmq:5672/
@@ -366,7 +366,7 @@ services:
       dockerfile: Dockerfile.service
       args:
         SERVICE_NAME: reconciler
-    container_name: microservices_reconciler
+    container_name: sapliy_reconciler
     environment:
       - PAYMENTS_DB_DSN=postgres://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@payments_db:5432/payments?sslmode=disable
       - LEDGER_DB_DSN=postgres://${POSTGRES_USER:-user}:${POSTGRES_PASSWORD:-password}@ledger_db:5432/ledger?sslmode=disable
@@ -380,7 +380,7 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: microservices_prometheus
+    container_name: sapliy_prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
@@ -390,7 +390,7 @@ services:
 
   loki:
     image: grafana/loki:2.9.2
-    container_name: microservices_loki
+    container_name: sapliy_loki
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
@@ -399,7 +399,7 @@ services:
 
   promtail:
     image: grafana/promtail:2.9.2
-    container_name: microservices_promtail
+    container_name: sapliy_promtail
     volumes:
       - /var/log:/var/log
       - /var/run/docker.sock:/var/run/docker.sock
@@ -410,7 +410,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: microservices_grafana
+    container_name: sapliy_grafana
     ports:
       - "3002:3000"
     environment:
@@ -424,9 +424,9 @@ services:
       - prometheus
       - loki
 
-  fintech-automation:
+  sapliy-console:
     build:
-      context: ../fintech-automation
+      context: ../sapliy-console
       dockerfile: Dockerfile
     container_name: fintech_automation
     environment:

@@ -574,7 +574,7 @@ const file_proto_zone_zone_proto_rawDesc = "" +
 	"\n" +
 	"UpdateZone\x12\x17.zone.UpdateZoneRequest\x1a\n" +
 	".zone.Zone\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\x1a\x0e/v1/zones/{id}\x12{\n" +
-	"\x12BulkUpdateMetadata\x12\x1f.zone.BulkUpdateMetadataRequest\x1a .zone.BulkUpdateMetadataResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/v1/zones/bulk-metadataB0Z.github.com/sapliy/fintech-ecosystem/proto/zoneb\x06proto3"
+	"\x12BulkUpdateMetadata\x12\x1f.zone.BulkUpdateMetadataRequest\x1a .zone.BulkUpdateMetadataResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/v1/zones/bulk-metadataB0Z.github.com/sapliy/sapliy-core/proto/zoneb\x06proto3"
 
 var (
 	file_proto_zone_zone_proto_rawDescOnce sync.Once

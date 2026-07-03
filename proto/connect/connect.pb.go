@@ -499,7 +499,7 @@ const file_proto_connect_connect_proto_rawDesc = "" +
 	"\rCreateAccount\x12\x1d.connect.CreateAccountRequest\x1a\x10.connect.Account\x12:\n" +
 	"\n" +
 	"GetAccount\x12\x1a.connect.GetAccountRequest\x1a\x10.connect.Account\x12@\n" +
-	"\rUpdateAccount\x12\x1d.connect.UpdateAccountRequest\x1a\x10.connect.AccountB3Z1github.com/sapliy/fintech-ecosystem/proto/connectb\x06proto3"
+	"\rUpdateAccount\x12\x1d.connect.UpdateAccountRequest\x1a\x10.connect.AccountB3Z1github.com/sapliy/sapliy-core/proto/connectb\x06proto3"
 
 var (
 	file_proto_connect_connect_proto_rawDescOnce sync.Once

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/sapliy/fintech-ecosystem/internal/ledger/domain"
+	"github.com/sapliy/sapliy-core/internal/ledger/domain"
 )
 
 func TestLedgerHandler_CreateAccount(t *testing.T) {

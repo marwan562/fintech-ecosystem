@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/sapliy/fintech-ecosystem/internal/flow/domain"
+	"github.com/sapliy/sapliy-core/internal/flow/domain"
 )
 
 // DebugService manages flow debugging functionality

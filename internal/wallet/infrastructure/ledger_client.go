@@ -3,7 +3,7 @@ package infrastructure
 import (
 	"context"
 
-	pb "github.com/sapliy/fintech-ecosystem/proto/ledger"
+	pb "github.com/sapliy/sapliy-core/proto/ledger"
 )
 
 type LedgerClient struct {

@@ -12,9 +12,9 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/sapliy/fintech-ecosystem/internal/fraud"
-	"github.com/sapliy/fintech-ecosystem/pkg/messaging"
-	"github.com/sapliy/fintech-ecosystem/pkg/monitoring"
+	"github.com/sapliy/sapliy-core/internal/fraud"
+	"github.com/sapliy/sapliy-core/pkg/messaging"
+	"github.com/sapliy/sapliy-core/pkg/monitoring"
 )
 
 var (

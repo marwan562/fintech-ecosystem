@@ -8,9 +8,9 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
-	"github.com/sapliy/fintech-ecosystem/pkg/observability"
-	pb "github.com/sapliy/fintech-ecosystem/proto/auth"
-	walletpb "github.com/sapliy/fintech-ecosystem/proto/wallet"
+	"github.com/sapliy/sapliy-core/pkg/observability"
+	pb "github.com/sapliy/sapliy-core/proto/auth"
+	walletpb "github.com/sapliy/sapliy-core/proto/wallet"
 )
 
 // GatewayHandler holds the configuration for upstream service URLs and Redis.

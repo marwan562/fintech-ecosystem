@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package flow;
 
-option go_package = "github.com/sapliy/fintech-ecosystem/proto/flow";
+option go_package = "github.com/sapliy/sapliy-core/proto/flow";
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";

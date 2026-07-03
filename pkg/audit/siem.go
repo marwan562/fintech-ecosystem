@@ -92,7 +92,7 @@ func (e *DataDogExporter) Export(ctx context.Context, logs []SignedAuditLog) err
 	for i, log := range logs {
 		ddLogs[i] = map[string]interface{}{
 			"ddsource":  "sapliy",
-			"service":   "fintech-ecosystem",
+			"service":   "sapliy-core",
 			"hostname":  log.ZoneID,
 			"message":   log.Action,
 			"status":    "info",

@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/sapliy/fintech-ecosystem/pkg/validation"
+	"github.com/sapliy/sapliy-core/pkg/validation"
 )
 
 type Publisher interface {

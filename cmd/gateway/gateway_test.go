@@ -11,10 +11,10 @@ import (
 
 	"github.com/alicebob/miniredis/v2"
 	"github.com/redis/go-redis/v9"
-	"github.com/sapliy/fintech-ecosystem/pkg/apikey"
-	"github.com/sapliy/fintech-ecosystem/pkg/observability"
-	pb "github.com/sapliy/fintech-ecosystem/proto/auth"
-	walletpb "github.com/sapliy/fintech-ecosystem/proto/wallet"
+	"github.com/sapliy/sapliy-core/pkg/apikey"
+	"github.com/sapliy/sapliy-core/pkg/observability"
+	pb "github.com/sapliy/sapliy-core/proto/auth"
+	walletpb "github.com/sapliy/sapliy-core/proto/wallet"
 	"google.golang.org/grpc"
 )
 

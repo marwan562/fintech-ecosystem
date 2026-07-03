@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/sapliy/fintech-ecosystem/pkg/messaging"
+	"github.com/sapliy/sapliy-core/pkg/messaging"
 )
 
 type KafkaPublisher struct {

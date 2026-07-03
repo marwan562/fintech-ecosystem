@@ -914,7 +914,7 @@ const file_proto_flow_flow_proto_rawDesc = "" +
 	".flow.Flow\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\x1a\x0e/v1/flows/{id}\x12p\n" +
 	"\x0fBulkUpdateFlows\x12\x1c.flow.BulkUpdateFlowsRequest\x1a\x1d.flow.BulkUpdateFlowsResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/v1/flows/bulk-update\x12a\n" +
 	"\fGetExecution\x12\x19.flow.GetExecutionRequest\x1a\x13.flow.FlowExecution\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/flows/executions/{id}\x12\x85\x01\n" +
-	"\x0fResumeExecution\x12\x1c.flow.ResumeExecutionRequest\x1a\x1d.flow.ResumeExecutionResponse\"5\x82\xd3\xe4\x93\x02/:\x01*\"*/v1/flows/executions/{execution_id}/resumeB0Z.github.com/sapliy/fintech-ecosystem/proto/flowb\x06proto3"
+	"\x0fResumeExecution\x12\x1c.flow.ResumeExecutionRequest\x1a\x1d.flow.ResumeExecutionResponse\"5\x82\xd3\xe4\x93\x02/:\x01*\"*/v1/flows/executions/{execution_id}/resumeB0Z.github.com/sapliy/sapliy-core/proto/flowb\x06proto3"
 
 var (
 	file_proto_flow_flow_proto_rawDescOnce sync.Once

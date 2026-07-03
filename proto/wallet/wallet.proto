@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package wallet;
 
-option go_package = "github.com/sapliy/fintech-ecosystem/proto/wallet";
+option go_package = "github.com/sapliy/sapliy-core/proto/wallet";
 
 import "google/api/annotations.proto";
 

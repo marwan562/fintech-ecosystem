@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/sapliy/fintech-ecosystem/internal/zone"
-	"github.com/sapliy/fintech-ecosystem/internal/zone/domain"
+	"github.com/sapliy/sapliy-core/internal/zone"
+	"github.com/sapliy/sapliy-core/internal/zone/domain"
 )
 
 func main() {

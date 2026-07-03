@@ -1261,7 +1261,7 @@ const file_proto_auth_auth_proto_rawDesc = "" +
 	"\fGetAuditLogs\x12\x19.auth.GetAuditLogsRequest\x1a\x1a.auth.GetAuditLogsResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/auth/audit_logs\x12`\n" +
 	"\rAddTeamMember\x12\x1a.auth.AddTeamMemberRequest\x1a\x10.auth.Membership\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/auth/teams/members\x12q\n" +
 	"\x10RemoveTeamMember\x12\x1d.auth.RemoveTeamMemberRequest\x1a\x1e.auth.RemoveTeamMemberResponse\"\x1e\x82\xd3\xe4\x93\x02\x18*\x16/v1/auth/teams/members\x12w\n" +
-	"\x0fListTeamMembers\x12\x1c.auth.ListTeamMembersRequest\x1a\x1d.auth.ListTeamMembersResponse\"'\x82\xd3\xe4\x93\x02!\x12\x1f/v1/auth/teams/{org_id}/membersB0Z.github.com/sapliy/fintech-ecosystem/proto/authb\x06proto3"
+	"\x0fListTeamMembers\x12\x1c.auth.ListTeamMembersRequest\x1a\x1d.auth.ListTeamMembersResponse\"'\x82\xd3\xe4\x93\x02!\x12\x1f/v1/auth/teams/{org_id}/membersB0Z.github.com/sapliy/sapliy-core/proto/authb\x06proto3"
 
 var (
 	file_proto_auth_auth_proto_rawDescOnce sync.Once

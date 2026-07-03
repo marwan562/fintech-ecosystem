@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/sapliy/fintech-ecosystem/internal/auth/domain"
-	pb "github.com/sapliy/fintech-ecosystem/proto/auth"
+	"github.com/sapliy/sapliy-core/internal/auth/domain"
+	pb "github.com/sapliy/sapliy-core/proto/auth"
 )
 
 type AuthGRPCServer struct {

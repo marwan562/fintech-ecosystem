@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sapliy/fintech-ecosystem/internal/policy"
+	"github.com/sapliy/sapliy-core/internal/policy"
 )
 
 // PolicyEngine handles RBAC checks by wrapping the unified policy engine.

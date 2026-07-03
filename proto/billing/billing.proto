@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package billing;
 
-option go_package = "github.com/sapliy/fintech-ecosystem/proto/billing";
+option go_package = "github.com/sapliy/sapliy-core/proto/billing";
 
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";

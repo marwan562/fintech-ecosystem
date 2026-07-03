@@ -141,15 +141,15 @@ Sapliy runs on the **same codebase** in two modes:
 
 | Repository             | Purpose                                                                  | Talks To                           | Does NOT                                         |
 | ---------------------- | ------------------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------ |
-| **fintech-ecosystem**  | The brain: auth, orgs, zones, keys, events, flows, ledger, policy engine | PostgreSQL, Kafka, Redis, RabbitMQ | Care about UI, SDK language                      |
-| **fintech-sdk-node**   | Node.js SDK: emit events, verify signatures, retry, test/live mode       | fintech-ecosystem API              | Contain business logic or flow execution         |
-| **fintech-sdk-go**     | Go SDK: same as Node                                                     | fintech-ecosystem API              | Contain business logic or flow execution         |
-| **fintech-sdk-python** | Python SDK: same as Node                                                 | fintech-ecosystem API              | Contain business logic or flow execution         |
-| **fintech-ui**         | React components: checkout, payment forms, dashboards                    | Uses publishable_key only          | Execute logic, hold secrets, admin actions       |
-| **fintech-automation** | Flow Builder UI: visual automation editor                                | fintech-ecosystem only             | Execute logic, talk directly to SDK users        |
-| **fintech-testing**    | Testing toolkit: local flow validation, CI/CD integration                | fintech-ecosystem API              | Contain business logic, execute production flows |
-| **sapliy-cli**         | Developer CLI: login, listen, trigger, debug                             | fintech-ecosystem WebSocket        | Hold state, execute production logic             |
-| **fintech-docs**       | Documentation site                                                       | Static content                     | —                                                |
+| **sapliy-core**  | The brain: auth, orgs, zones, keys, events, flows, ledger, policy engine | PostgreSQL, Kafka, Redis, RabbitMQ | Care about UI, SDK language                      |
+| **fintech-sdk-node**   | Node.js SDK: emit events, verify signatures, retry, test/live mode       | sapliy-core API              | Contain business logic or flow execution         |
+| **fintech-sdk-go**     | Go SDK: same as Node                                                     | sapliy-core API              | Contain business logic or flow execution         |
+| **fintech-sdk-python** | Python SDK: same as Node                                                 | sapliy-core API              | Contain business logic or flow execution         |
+| **sapliy-ui**         | React components: checkout, payment forms, dashboards                    | Uses publishable_key only          | Execute logic, hold secrets, admin actions       |
+| **sapliy-console** | Flow Builder UI: visual automation editor                                | sapliy-core only             | Execute logic, talk directly to SDK users        |
+| **fintech-testing**    | Testing toolkit: local flow validation, CI/CD integration                | sapliy-core API              | Contain business logic, execute production flows |
+| **sapliy-cli**         | Developer CLI: login, listen, trigger, debug                             | sapliy-core WebSocket        | Hold state, execute production logic             |
+| **sapliy-docs**       | Documentation site                                                       | Static content                     | —                                                |
 
 ---
 
@@ -167,7 +167,7 @@ graph TB
         FlowBuilder[Flow Builder UI]
     end
 
-    subgraph "Core Platform - fintech-ecosystem"
+    subgraph "Core Platform - sapliy-core"
         Gateway[API Gateway :8080]
         Auth[Auth Service :8081]
         Payments[Payments :8082]
@@ -312,7 +312,7 @@ Each key includes:
 
 **Goal**: Get SaaS version live with core features
 
-- ✅ Core backend (fintech-ecosystem)
+- ✅ Core backend (sapliy-core)
 - ✅ Event ingestion & flow execution
 - ✅ Auth, zones, keys, ledger
 - ✅ Test/Live mode support
@@ -326,7 +326,7 @@ Each key includes:
 
 **Goal**: Build community, expand language support
 
-- 📦 Publish fintech-ecosystem as open-source (MIT license)
+- 📦 Publish sapliy-core as open-source (MIT license)
 - 🐍 Python SDK (`sapliyio-fintech`)
 - 🔵 Go SDK (`fintech-sdk-go`)
 - 🧪 Testing toolkit (`@sapliyio/fintech-testing`)
@@ -763,7 +763,7 @@ CREATE TABLE ledger_entries (
 
 ## Getting Started
 
-1. **Run the ecosystem**: `docker-compose up -d` in `fintech-ecosystem`
+1. **Run the ecosystem**: `docker-compose up -d` in `sapliy-core`
 2. **Create a zone**: Use the API or Flow Builder UI
 3. **Install SDK**: `npm install @sapliyio/fintech`
 4. **Emit events**: `sapliy.emit("checkout.completed", { amount: 100 })`
@@ -885,15 +885,15 @@ When choosing between SaaS and Self-Hosted:
 
 ## Related Repositories
 
-- [fintech-ecosystem](https://github.com/sapliy/fintech-ecosystem) — Core backend services (Go)
+- [sapliy-core](https://github.com/sapliy/sapliy-core) — Core backend services (Go)
 - [fintech-sdk-node](https://github.com/sapliy/fintech-sdk-node) — Node.js SDK (`@sapliyio/fintech`)
 - [fintech-sdk-go](https://github.com/sapliy/fintech-sdk-go) — Go SDK (`fintech-sdk-go`)
 - [fintech-sdk-python](https://github.com/sapliy/fintech-sdk-python) — Python SDK (`sapliyio-fintech`)
-- [fintech-ui](https://github.com/sapliy/fintech-ui) — React components (`@sapliyio/fintech-ui`)
+- [sapliy-ui](https://github.com/sapliy/sapliy-ui) — React components (`@sapliyio/sapliy-ui`)
 - [fintech-testing](https://github.com/sapliy/fintech-testing) — Testing toolkit (`@sapliyio/fintech-testing`)
-- [fintech-automation](https://github.com/sapliy/fintech-automation) — Flow Builder UI (React)
+- [sapliy-console](https://github.com/sapliy/sapliy-console) — Flow Builder UI (React)
 - [sapliy-cli](https://github.com/sapliy/sapliy-cli) — Developer CLI (`@sapliyio/sapliy-cli`)
-- [fintech-docs](https://github.com/sapliy/fintech-docs) — Documentation site
+- [sapliy-docs](https://github.com/sapliy/sapliy-docs) — Documentation site
 
 ---
 
@@ -906,7 +906,7 @@ MIT © [Sapliy](https://github.com/sapliy)
 ## Support & Community
 
 - **Discord**: [Sapliy Community](https://discord.gg/sapliy)
-- **GitHub Issues**: [Report bugs](https://github.com/sapliy/fintech-ecosystem/issues)
+- **GitHub Issues**: [Report bugs](https://github.com/sapliy/sapliy-core/issues)
 - **Enterprise Support**: [contact@sapliy.io](mailto:contact@sapliy.io)
 - **Security**: [security@sapliy.io](mailto:security@sapliy.io)
 

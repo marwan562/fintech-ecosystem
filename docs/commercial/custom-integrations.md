@@ -284,7 +284,7 @@ Ready to discuss your integration needs?
 ### Online Form
 Fill out our consultation request:
 ```bash
-curl -X POST https://api.fintech-ecosystem.com/v1/integrations/consultations \
+curl -X POST https://api.sapliy-core.com/v1/integrations/consultations \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
     "contact_name": "Your Name",
@@ -300,7 +300,7 @@ curl -X POST https://api.fintech-ecosystem.com/v1/integrations/consultations \
 
 ### Contact Us
 
-- **Email**: integrations@fintech-ecosystem.com
+- **Email**: integrations@sapliy-core.com
 - **Phone**: +1 (888) 555-INTG
 - **Schedule**: [calendly.com/fintech-integrations](https://calendly.com/fintech-integrations)
 

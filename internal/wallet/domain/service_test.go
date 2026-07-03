@@ -5,8 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	pb "github.com/sapliy/fintech-ecosystem/proto/ledger"
-	walletpb "github.com/sapliy/fintech-ecosystem/proto/wallet"
+	pb "github.com/sapliy/sapliy-core/proto/ledger"
+	walletpb "github.com/sapliy/sapliy-core/proto/wallet"
 )
 
 func TestWalletService_GetWallet(t *testing.T) {

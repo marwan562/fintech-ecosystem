@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/sapliy/fintech-ecosystem/internal/ledger/domain"
+	"github.com/sapliy/sapliy-core/internal/ledger/domain"
 )
 
 type CachedRepository struct {

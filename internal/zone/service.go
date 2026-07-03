@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/sapliy/fintech-ecosystem/internal/zone/domain"
+	"github.com/sapliy/sapliy-core/internal/zone/domain"
 )
 
 type Service struct {

@@ -15,12 +15,12 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
-	"github.com/sapliy/fintech-ecosystem/internal/flow"
-	"github.com/sapliy/fintech-ecosystem/internal/flow/domain"
-	"github.com/sapliy/fintech-ecosystem/internal/flow/infrastructure"
-	"github.com/sapliy/fintech-ecosystem/pkg/database"
-	"github.com/sapliy/fintech-ecosystem/pkg/messaging"
-	"github.com/sapliy/fintech-ecosystem/pkg/observability"
+	"github.com/sapliy/sapliy-core/internal/flow"
+	"github.com/sapliy/sapliy-core/internal/flow/domain"
+	"github.com/sapliy/sapliy-core/internal/flow/infrastructure"
+	"github.com/sapliy/sapliy-core/pkg/database"
+	"github.com/sapliy/sapliy-core/pkg/messaging"
+	"github.com/sapliy/sapliy-core/pkg/observability"
 )
 
 type FlowServer struct {

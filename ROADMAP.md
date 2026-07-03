@@ -93,7 +93,7 @@ Organization → Zone → Event → Flow → Action
 
 ### Ecosystem Packages (v4.x) ✅
 
-- [x] **@sapliyio/fintech-ui** — React components
+- [x] **@sapliyio/sapliy-ui** — React components
 - [x] **fintech-testing** — Test utilities
 - [x] **sapliy-cli v2** — Enhanced CLI
 - [x] **fintech-examples** — Sample apps
@@ -181,14 +181,14 @@ Revenue drivers:
 
 | Repo                 | Responsibility                           |
 | -------------------- | ---------------------------------------- |
-| `fintech-ecosystem`  | Core engine (auth, zones, events, flows) |
+| `sapliy-core`  | Core engine (auth, zones, events, flows) |
 | `fintech-sdk-node`   | Node.js SDK                              |
 | `fintech-sdk-go`     | Go SDK                                   |
 | `fintech-sdk-python` | Python SDK                               |
-| `fintech-ui`         | React components                         |
-| `fintech-automation` | Flow Builder UI                          |
+| `sapliy-ui`         | React components                         |
+| `sapliy-console` | Flow Builder UI                          |
 | `sapliy-cli`         | Developer CLI                            |
-| `fintech-docs`       | Documentation site                       |
+| `sapliy-docs`       | Documentation site                       |
 
 See [ARCHITECTURE.md](../ARCHITECTURE.md) for the full system design.
 

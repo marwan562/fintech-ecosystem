@@ -9,7 +9,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
 )
 
 var upgrader = websocket.Upgrader{

@@ -8,15 +8,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/sapliy/fintech-ecosystem/pkg/authutil"
-	"github.com/sapliy/fintech-ecosystem/pkg/observability"
+	"github.com/sapliy/sapliy-core/pkg/authutil"
+	"github.com/sapliy/sapliy-core/pkg/observability"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
-	pb "github.com/sapliy/fintech-ecosystem/proto/auth"
-	walletpb "github.com/sapliy/fintech-ecosystem/proto/wallet"
+	pb "github.com/sapliy/sapliy-core/proto/auth"
+	walletpb "github.com/sapliy/sapliy-core/proto/wallet"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/sapliy/fintech-ecosystem/pkg/monitoring"
+	"github.com/sapliy/sapliy-core/pkg/monitoring"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

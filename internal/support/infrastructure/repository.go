@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/sapliy/fintech-ecosystem/internal/support/domain"
+	"github.com/sapliy/sapliy-core/internal/support/domain"
 )
 
 // SQLTicketRepository implements TicketRepository using SQL database.

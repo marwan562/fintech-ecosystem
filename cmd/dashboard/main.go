@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/sapliy/fintech-ecosystem/internal/dashboard"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
+	"github.com/sapliy/sapliy-core/internal/dashboard"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
 )
 
 func main() {

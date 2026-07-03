@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
 )
 
 // envelope mirrors the private type used in Write() so we can decode responses.

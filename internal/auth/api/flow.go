@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/sapliy/fintech-ecosystem/internal/flow/domain"
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
+	"github.com/sapliy/sapliy-core/internal/flow/domain"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
 )
 
 type FlowHandler struct {

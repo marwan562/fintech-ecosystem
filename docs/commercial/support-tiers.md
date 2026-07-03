@@ -167,7 +167,7 @@ Enterprise customers have access to:
 
 **Via API**:
 ```bash
-curl -X POST https://api.fintech-ecosystem.com/v1/support/tickets \
+curl -X POST https://api.sapliy-core.com/v1/support/tickets \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -d '{
     "subject": "Payment processing issue",
@@ -187,9 +187,9 @@ curl -X POST https://api.fintech-ecosystem.com/v1/support/tickets \
 
 | Tier | Email | Phone |
 |------|-------|-------|
-| Essential | support@fintech-ecosystem.com | — |
-| Professional | priority-support@fintech-ecosystem.com | +1 (888) 555-0123 |
-| Enterprise | enterprise-support@fintech-ecosystem.com | +1 (888) 555-0199 (24/7) |
+| Essential | support@sapliy-core.com | — |
+| Professional | priority-support@sapliy-core.com | +1 (888) 555-0123 |
+| Enterprise | enterprise-support@sapliy-core.com | +1 (888) 555-0199 (24/7) |
 
 ---
 
@@ -202,7 +202,7 @@ A: Yes! Upgrades take effect immediately. You'll be charged a prorated amount fo
 A: You'll automatically move to the Essential tier. Outstanding tickets remain open until resolved.
 
 **Q: Are there volume discounts for multiple years?**
-A: Yes. Contact sales@fintech-ecosystem.com for multi-year agreements.
+A: Yes. Contact sales@sapliy-core.com for multi-year agreements.
 
 **Q: Can I request specific engineers?**
 A: Enterprise customers can request a dedicated support engineer who becomes familiar with their implementation.
@@ -212,6 +212,6 @@ A: Enterprise customers can request a dedicated support engineer who becomes fam
 ## Contact Sales
 
 For custom requirements or enterprise agreements:
-- **Email**: sales@fintech-ecosystem.com
+- **Email**: sales@sapliy-core.com
 - **Phone**: +1 (888) 555-SALE
 - **Schedule a Call**: [calendly.com/fintech-sales](https://calendly.com/fintech-sales)

@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"time"
 
-	ledgerdomain "github.com/sapliy/fintech-ecosystem/internal/ledger/domain"
+	ledgerdomain "github.com/sapliy/sapliy-core/internal/ledger/domain"
 )
 
 // ApprovalLedgerEntry represents an immutable approval decision record

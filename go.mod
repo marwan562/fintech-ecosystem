@@ -1,4 +1,4 @@
-module github.com/sapliy/fintech-ecosystem
+module github.com/sapliy/sapliy-core
 
 go 1.24.6
 

@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
 )
 
 // EventEnvelope is the full event structure following the spec

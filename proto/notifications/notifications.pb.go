@@ -591,7 +591,7 @@ const file_proto_notifications_notifications_proto_rawDesc = "" +
 	"\x15CreateWebhookEndpoint\x12+.notifications.CreateWebhookEndpointRequest\x1a\x1e.notifications.WebhookEndpoint\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/webhooks/endpoints\x12\x8f\x01\n" +
 	"\x14ListWebhookEndpoints\x12*.notifications.ListWebhookEndpointsRequest\x1a+.notifications.ListWebhookEndpointsResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\x12\x16/v1/webhooks/endpoints\x12\x97\x01\n" +
 	"\x15DeleteWebhookEndpoint\x12+.notifications.DeleteWebhookEndpointRequest\x1a,.notifications.DeleteWebhookEndpointResponse\"#\x82\xd3\xe4\x93\x02\x1d*\x1b/v1/webhooks/endpoints/{id}\x12\x90\x01\n" +
-	"\x16GetNotificationHistory\x12,.notifications.GetNotificationHistoryRequest\x1a-.notifications.GetNotificationHistoryResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/notificationsB9Z7github.com/sapliy/fintech-ecosystem/proto/notificationsb\x06proto3"
+	"\x16GetNotificationHistory\x12,.notifications.GetNotificationHistoryRequest\x1a-.notifications.GetNotificationHistoryResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/notificationsB9Z7github.com/sapliy/sapliy-core/proto/notificationsb\x06proto3"
 
 var (
 	file_proto_notifications_notifications_proto_rawDescOnce sync.Once

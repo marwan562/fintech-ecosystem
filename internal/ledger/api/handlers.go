@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/sapliy/fintech-ecosystem/internal/ledger/domain"
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
+	"github.com/sapliy/sapliy-core/internal/ledger/domain"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
 )
 
 type LedgerHandler struct {

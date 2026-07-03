@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sapliy/fintech-ecosystem/internal/auth/domain"
-	"github.com/sapliy/fintech-ecosystem/pkg/bcryptutil"
+	"github.com/sapliy/sapliy-core/internal/auth/domain"
+	"github.com/sapliy/sapliy-core/pkg/bcryptutil"
 )
 
 func TestAuthHandler_Login(t *testing.T) {

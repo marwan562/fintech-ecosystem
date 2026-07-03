@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/sapliy/fintech-ecosystem/internal/billing/domain"
+	"github.com/sapliy/sapliy-core/internal/billing/domain"
 )
 
 type SQLRepository struct {

@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
-	"github.com/sapliy/fintech-ecosystem/pkg/apikey"
-	"github.com/sapliy/fintech-ecosystem/pkg/scopes"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/apikey"
+	"github.com/sapliy/sapliy-core/pkg/scopes"
 )
 
 type Middleware func(http.Handler) http.Handler

@@ -3,8 +3,8 @@ package infrastructure
 import (
 	"context"
 
-	"github.com/sapliy/fintech-ecosystem/internal/flow/domain"
-	"github.com/sapliy/fintech-ecosystem/pkg/messaging"
+	"github.com/sapliy/sapliy-core/internal/flow/domain"
+	"github.com/sapliy/sapliy-core/pkg/messaging"
 )
 
 type KafkaEventRetriggerer struct {

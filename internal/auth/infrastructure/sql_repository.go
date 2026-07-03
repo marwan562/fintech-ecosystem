@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/sapliy/fintech-ecosystem/internal/auth/domain"
+	"github.com/sapliy/sapliy-core/internal/auth/domain"
 )
 
 type SQLRepository struct {

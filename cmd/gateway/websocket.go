@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
 )
 
 func (h *GatewayHandler) handleWebSocket(w http.ResponseWriter, r *http.Request) {

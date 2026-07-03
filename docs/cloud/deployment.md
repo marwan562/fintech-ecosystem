@@ -63,11 +63,11 @@ We use External Secrets Operator to fetch secrets from AWS Secrets Manager. Ensu
 - `fintech/prod/jwt-secrets`
 
 ### 3. Deploy Helm Chart
-Deploy the `fintech-ecosystem` chart.
+Deploy the `sapliy-core` chart.
 
 ```bash
-helm upgrade --install fintech-ecosystem ./deploy/helm/fintech-ecosystem \
-  --namespace fintech-ecosystem \
+helm upgrade --install sapliy-core ./deploy/helm/sapliy-core \
+  --namespace sapliy-core \
   --create-namespace \
   --values values-prod.yaml
 ```

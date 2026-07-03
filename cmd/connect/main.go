@@ -5,9 +5,9 @@ import (
 	"net"
 	"os"
 
-	"github.com/sapliy/fintech-ecosystem/internal/connect"
-	"github.com/sapliy/fintech-ecosystem/pkg/database"
-	pb "github.com/sapliy/fintech-ecosystem/proto/connect"
+	"github.com/sapliy/sapliy-core/internal/connect"
+	"github.com/sapliy/sapliy-core/pkg/database"
+	pb "github.com/sapliy/sapliy-core/proto/connect"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )

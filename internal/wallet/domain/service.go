@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/sapliy/fintech-ecosystem/pkg/validation"
-	pb "github.com/sapliy/fintech-ecosystem/proto/ledger"
-	walletpb "github.com/sapliy/fintech-ecosystem/proto/wallet"
+	"github.com/sapliy/sapliy-core/pkg/validation"
+	pb "github.com/sapliy/sapliy-core/proto/ledger"
+	walletpb "github.com/sapliy/sapliy-core/proto/wallet"
 )
 
 type LedgerClient interface {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/sapliy/fintech-ecosystem/internal/integrations/domain"
+	"github.com/sapliy/sapliy-core/internal/integrations/domain"
 )
 
 // SQLTemplateRepository implements TemplateRepository using SQL database.

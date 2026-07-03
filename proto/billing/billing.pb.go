@@ -437,7 +437,7 @@ const file_proto_billing_billing_proto_rawDesc = "" +
 	"\x12CreateSubscription\x12\".billing.CreateSubscriptionRequest\x1a\x15.billing.Subscription\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/v1/billing/subscriptions\x12\x81\x01\n" +
 	"\x12CancelSubscription\x12\".billing.CancelSubscriptionRequest\x1a\x15.billing.Subscription\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/billing/subscriptions/{id}/cancel\x12q\n" +
 	"\x0fGetSubscription\x12\x1f.billing.GetSubscriptionRequest\x1a\x15.billing.Subscription\"&\x82\xd3\xe4\x93\x02 \x12\x1e/v1/billing/subscriptions/{id}\x12}\n" +
-	"\x11ListSubscriptions\x12!.billing.ListSubscriptionsRequest\x1a\".billing.ListSubscriptionsResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/billing/subscriptionsB3Z1github.com/sapliy/fintech-ecosystem/proto/billingb\x06proto3"
+	"\x11ListSubscriptions\x12!.billing.ListSubscriptionsRequest\x1a\".billing.ListSubscriptionsResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/billing/subscriptionsB3Z1github.com/sapliy/sapliy-core/proto/billingb\x06proto3"
 
 var (
 	file_proto_billing_billing_proto_rawDescOnce sync.Once

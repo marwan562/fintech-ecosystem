@@ -3,7 +3,7 @@ package domain
 import (
 	"context"
 
-	"github.com/sapliy/fintech-ecosystem/pkg/validation"
+	"github.com/sapliy/sapliy-core/pkg/validation"
 )
 
 type PaymentService struct {

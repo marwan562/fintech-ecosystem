@@ -11,7 +11,7 @@ keywords:
   - microservices
 home: https://sapliy.io
 sources:
-  - https://github.com/sapliy/fintech-ecosystem
+  - https://github.com/sapliy/sapliy-core
 maintainers:
   - name: Sapliy Team
     email: team@sapliy.io

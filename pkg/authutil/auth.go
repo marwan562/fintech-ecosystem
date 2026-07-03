@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/sapliy/fintech-ecosystem/pkg/jwtutil"
+	"github.com/sapliy/sapliy-core/pkg/jwtutil"
 )
 
 // ExtractUserID retrieves the UserID from the request.

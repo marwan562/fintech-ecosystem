@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package connect;
 
-option go_package = "github.com/sapliy/fintech-ecosystem/proto/connect";
+option go_package = "github.com/sapliy/sapliy-core/proto/connect";
 
 import "google/protobuf/timestamp.proto";
 

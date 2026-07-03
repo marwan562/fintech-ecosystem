@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/sapliy/fintech-ecosystem/internal/zone/domain"
+	"github.com/sapliy/sapliy-core/internal/zone/domain"
 )
 
 type RedisEventPublisher struct {

@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	authdomain "github.com/sapliy/fintech-ecosystem/internal/auth/domain"
+	authdomain "github.com/sapliy/sapliy-core/internal/auth/domain"
 )
 
 // ApprovalNodeData represents the configuration for an approval node

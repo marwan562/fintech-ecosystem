@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/sapliy/fintech-ecosystem/internal/flow"
-	flowDomain "github.com/sapliy/fintech-ecosystem/internal/flow/domain"
-	"github.com/sapliy/fintech-ecosystem/pkg/apierror"
-	"github.com/sapliy/fintech-ecosystem/pkg/jsonutil"
+	"github.com/sapliy/sapliy-core/internal/flow"
+	flowDomain "github.com/sapliy/sapliy-core/internal/flow/domain"
+	"github.com/sapliy/sapliy-core/pkg/apierror"
+	"github.com/sapliy/sapliy-core/pkg/jsonutil"
 )
 
 type DebugHandler struct {
