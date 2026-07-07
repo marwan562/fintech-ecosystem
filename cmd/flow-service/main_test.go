@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/sapliy/sapliy-core/internal/flow"
 	"github.com/sapliy/sapliy-core/internal/flow/domain"
 	"github.com/sapliy/sapliy-core/internal/flow/testutil"
@@ -48,6 +49,10 @@ func TestFlowServer_StartDebugSession(t *testing.T) {
 	}
 
 	req := httptest.NewRequest("POST", "/api/v1/flows/flow_test/zones/zone_456/debug", bytes.NewBuffer(reqBodyBytes))
+	req = mux.SetURLVars(req, map[string]string{
+		"flowId": "flow_test",
+		"zoneId": "zone_456",
+	})
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
