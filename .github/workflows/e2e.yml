@@ -13,18 +13,18 @@ jobs:
 
         steps:
             - name: Checkout Ecosytem
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                   path: fintech-ecosystem
 
             - name: Checkout Testing
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                   repository: sapliy/fintech-testing
                   path: fintech-testing
 
             - name: Checkout SDK Node
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                   repository: sapliy/fintech-sdk-node
                   path: fintech-sdk-node
