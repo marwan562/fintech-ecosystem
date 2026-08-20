@@ -79,7 +79,7 @@ const baseLayout = `
                         <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td class="content-block">
-                                    <span class="apple-link">Sapliy Fintech, Inc. 123 Innovation Dr, Tech City</span>
+                                    <span class="apple-link">Sapliy, Inc. 123 Innovation Dr, Tech City</span>
                                     <br> Don't want these emails? <a href="#">Unsubscribe</a>.
                                 </td>
                             </tr>

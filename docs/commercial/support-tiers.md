@@ -1,6 +1,6 @@
 # Support Tiers & SLA Packages
 
-This document outlines the commercial support offerings for the Fintech Ecosystem platform. Whether you're a startup running self-hosted or an enterprise using our managed cloud, we offer support packages to match your needs.
+This document outlines the commercial support offerings for the Sapliy Ecosystem platform. Whether you're a startup running self-hosted or an enterprise using our managed cloud, we offer support packages to match your needs.
 
 ## Overview
 
@@ -214,4 +214,4 @@ A: Enterprise customers can request a dedicated support engineer who becomes fam
 For custom requirements or enterprise agreements:
 - **Email**: sales@sapliy-core.com
 - **Phone**: +1 (888) 555-SALE
-- **Schedule a Call**: [calendly.com/fintech-sales](https://calendly.com/fintech-sales)
+- **Schedule a Call**: [calendly.com/sapliy-sales](https://calendly.com/sapliy-sales)

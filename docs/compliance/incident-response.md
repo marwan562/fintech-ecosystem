@@ -44,7 +44,7 @@ To ensure a coordinated, effective response to security incidents and system out
 ## 5. Communication Channels
 
 - **Internal**: Slack channel `#incident-war-room`.
-- **Public**: Status Page (`status.fintech-cloud.com`) updates every 30 mins during P0.
+- **Public**: Status Page (`status.sapliy-cloud.com`) updates every 30 mins during P0.
 - **Support**: Notify affected enterprise customers via email/intercom.
 
 ## 6. Testing

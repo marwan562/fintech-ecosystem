@@ -17,7 +17,7 @@ jobs:
                   node-version: "20"
             - name: Build & Test Node SDK
               run: |
-                  cd ../fintech-sdk-node
+                  cd ../sapliy-sdk-node
                   npm install
                   npm run lint
                   npm run build
@@ -32,7 +32,7 @@ jobs:
                   go-version: "1.24"
             - name: Build & Test Go SDK
               run: |
-                  cd ../fintech-sdk-go
+                  cd ../sapliy-sdk-go
                   make build
 
     python-sdk:
@@ -45,6 +45,6 @@ jobs:
                   python-version: "3.10"
             - name: Build Python SDK
               run: |
-                  cd ../fintech-sdk-python
+                  cd ../sapliy-sdk-python
                   pip install build
                   python -m build

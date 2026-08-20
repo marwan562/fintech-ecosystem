@@ -18,14 +18,14 @@ provider "aws" {
   default_tags {
     tags = {
       Environment = var.environment
-      Project     = "fintech-cloud"
+      Project     = "sapliy-cloud"
       ManagedBy   = "terraform"
     }
   }
 }
 
 locals {
-  name = "fintech-${var.environment}"
+  name = "sapliy-${var.environment}"
 }
 
 module "vpc" {
@@ -88,7 +88,7 @@ module "rds" {
   max_allocated_storage = 100
 
   db_name  = "microservices"
-  username = "fintech_admin"
+  username = "sapliy_admin"
   port     = 5432
 
   manage_master_user_password = true # Auto-create secret in Secrets Manager

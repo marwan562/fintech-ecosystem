@@ -21,7 +21,7 @@ import (
 func main() {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		dbURL = "postgres://postgres:postgres@localhost:5432/fintech?sslmode=disable"
+		dbURL = "postgres://postgres:postgres@localhost:5432/sapliy?sslmode=disable"
 	}
 
 	db, err := sql.Open("postgres", dbURL)

@@ -36,7 +36,7 @@ func TestTemplateService_List(t *testing.T) {
 		string(TemplateEcommerce),
 		string(TemplateSaaSBilling),
 		string(TemplateMarketplace),
-		string(TemplateFintechBasic),
+		string(TemplateSapliyBasic),
 		string(TemplateAutomation),
 	}
 
@@ -264,8 +264,8 @@ func TestTemplateWebhookConfigurations(t *testing.T) {
 			expectedWebhooks: 1,
 		},
 		{
-			name:             "Fintech basic template webhooks",
-			templateType:     TemplateFintechBasic,
+			name:             "Sapliy basic template webhooks",
+			templateType:     TemplateSapliyBasic,
 			expectedWebhooks: 2,
 		},
 		{

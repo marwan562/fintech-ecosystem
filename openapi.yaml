@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Sapliy Fintech API
-  description: Official API for the Sapliy Fintech Ecosystem. Build robust financial applications with our type-safe, high-integrity platform.
+  title: Sapliy API
+  description: Official API for the Sapliy Ecosystem. Build robust financial applications with our type-safe, high-integrity platform.
   version: 1.0.0
   contact:
     name: Sapliy Support

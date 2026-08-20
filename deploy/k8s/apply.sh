@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🚀 Deploying Fintech Ecosystem to Kubernetes..."
+echo "🚀 Deploying Sapliy Ecosystem to Kubernetes..."
 
 # Create Namespace
 kubectl apply -f namespace.yaml
@@ -9,12 +9,12 @@ echo "📦 deploying infrastructure..."
 kubectl apply -f infrastructure.yaml
 
 echo "⏳ Waiting for Infrastructure to be ready..."
-kubectl wait --namespace fintech-ecosystem \
+kubectl wait --namespace sapliy-ecosystem \
   --for=condition=ready pod \
   --selector=app=postgres \
   --timeout=90s
 
-kubectl wait --namespace fintech-ecosystem \
+kubectl wait --namespace sapliy-ecosystem \
   --for=condition=ready pod \
   --selector=app=redis \
   --timeout=90s
@@ -22,7 +22,7 @@ kubectl wait --namespace fintech-ecosystem \
 echo "🔎 Deploying Observability (Jaeger)..."
 kubectl apply -f observability.yaml
 
-kubectl wait --namespace fintech-ecosystem \
+kubectl wait --namespace sapliy-ecosystem \
   --for=condition=ready pod \
   --selector=app=jaeger \
   --timeout=90s
@@ -36,4 +36,4 @@ kubectl apply -f notifications.yaml
 kubectl apply -f fraud.yaml
 kubectl apply -f reconciler.yaml
 
-echo "✅ Deployment requests sent. Check status with: kubectl get pods -n fintech-ecosystem"
+echo "✅ Deployment requests sent. Check status with: kubectl get pods -n sapliy-ecosystem"

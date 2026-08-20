@@ -33,7 +33,7 @@ clean:
 	rm -f mock_webhook_server.go
 
 # Accessible packages (to avoid permission errors on macOS)
-PKGS := ./cmd/auth/... ./cmd/cli/... ./cmd/connect/... ./cmd/reconciler/... ./cmd/fraud/... ./cmd/ledger/... ./cmd/dashboard/... ./internal/auth/... ./internal/connect/... ./internal/notification/... ./internal/payment/... ./internal/ledger/... ./internal/fraud/... ./internal/dashboard/... ./pkg/...
+PKGS := ./cmd/auth/... ./cmd/cli/... ./cmd/connect/... ./cmd/reconciler/... ./cmd/fraud/... ./cmd/ledger/... ./internal/auth/... ./internal/connect/... ./internal/notification/... ./internal/payment/... ./internal/ledger/... ./internal/fraud/... ./pkg/...
 
 # Run all tests
 test:

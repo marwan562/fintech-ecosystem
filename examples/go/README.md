@@ -1,11 +1,11 @@
 # Go SDK Examples
 
-This directory contains examples of how to use the Sapliy Fintech SDK for Go.
+This directory contains examples of how to use the Sapliy SDK for Go.
 
 ## Prerequisites
 
 - Go 1.24+
-- A running instance of the Fintech Ecosystem (or access to one)
+- A running instance of the Sapliy Ecosystem (or access to one)
 - An API Key (sk_test_...)
 
 ## Examples

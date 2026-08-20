@@ -13,7 +13,7 @@ const (
 	TemplateEcommerce    TemplateType = "e-commerce"
 	TemplateSaaSBilling  TemplateType = "saas-billing"
 	TemplateMarketplace  TemplateType = "marketplace"
-	TemplateFintechBasic TemplateType = "fintech-basic"
+	TemplateSapliyBasic TemplateType = "sapliy-basic"
 	TemplateAutomation   TemplateType = "automation-hub"
 )
 
@@ -216,9 +216,9 @@ var TemplateRegistry = map[TemplateType]Template{
 			"dispute.opened", "dispute.resolved",
 		},
 	},
-	TemplateFintechBasic: {
-		Type:        TemplateFintechBasic,
-		Name:        "Fintech Basic",
+	TemplateSapliyBasic: {
+		Type:        TemplateSapliyBasic,
+		Name:        "Sapliy Basic",
 		Description: "Basic payment processing with fraud checks",
 		Flows: []FlowTemplate{
 			{

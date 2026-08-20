@@ -1,0 +1,22 @@
+# Minimal demo build for the playbook-demo gateway.
+# Only ./cmd/gateway is compiled; everything else is excluded from the image.
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /app
+
+# Cache module downloads first (module path: github.com/sapliy/sapliy-core)
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+# GOWORK=off: the repo is not part of a Go workspace at build time.
+RUN CGO_ENABLED=0 GOWORK=off go build -o /app/gateway ./cmd/gateway
+
+FROM alpine:3.20
+
+WORKDIR /app
+COPY --from=builder /app/gateway .
+
+EXPOSE 8080
+CMD ["./gateway"]

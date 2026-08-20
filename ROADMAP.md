@@ -1,6 +1,6 @@
 # Product Roadmap
 
-Strategic plan to evolve Sapliy into a **production-grade, open-source fintech automation platform** — combining the reliability of Stripe with the flexibility of Zapier.
+Strategic plan to evolve Sapliy into a **production-grade, open-source sapliy automation platform** — combining the reliability of Stripe with the flexibility of Zapier.
 
 ---
 
@@ -73,7 +73,7 @@ Organization → Zone → Event → Flow → Action
 
 ### Services (v2.x) ✅
 
-- [x] Hosted Version (Fintech Cloud)
+- [x] Hosted Version (Sapliy Cloud)
 - [x] Enterprise Compliance
 - [x] Paid Support & SLAs
 - [x] Custom Integrations
@@ -94,9 +94,9 @@ Organization → Zone → Event → Flow → Action
 ### Ecosystem Packages (v4.x) ✅
 
 - [x] **@sapliyio/sapliy-ui** — React components
-- [x] **fintech-testing** — Test utilities
+- [x] **sapliy-testing** — Test utilities
 - [x] **sapliy-cli v2** — Enhanced CLI
-- [x] **fintech-examples** — Sample apps
+- [x] **sapliy-examples** — Sample apps
 - [x] **Documentation Site** — VitePress docs
 
 ### Zone & Automation Platform (v5.x) ✅
@@ -182,9 +182,9 @@ Revenue drivers:
 | Repo                 | Responsibility                           |
 | -------------------- | ---------------------------------------- |
 | `sapliy-core`  | Core engine (auth, zones, events, flows) |
-| `fintech-sdk-node`   | Node.js SDK                              |
-| `fintech-sdk-go`     | Go SDK                                   |
-| `fintech-sdk-python` | Python SDK                               |
+| `sapliy-sdk-node`   | Node.js SDK                              |
+| `sapliy-sdk-go`     | Go SDK                                   |
+| `sapliy-sdk-python` | Python SDK                               |
 | `sapliy-ui`         | React components                         |
 | `sapliy-console` | Flow Builder UI                          |
 | `sapliy-cli`         | Developer CLI                            |

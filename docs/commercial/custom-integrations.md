@@ -1,6 +1,6 @@
 # Custom Integrations & Professional Services
 
-This document outlines our professional services for custom integrations, complex migrations, and bespoke marketplace setups. Our team of integration specialists ensures a smooth transition to the Fintech Ecosystem platform.
+This document outlines our professional services for custom integrations, complex migrations, and bespoke marketplace setups. Our team of integration specialists ensures a smooth transition to the Sapliy Ecosystem platform.
 
 ## Overview
 
@@ -125,7 +125,7 @@ Everything in Standard, plus:
 #### Webhook Integration
 **Starting at $5,000** | **~7 days**
 
-Connect Fintech Ecosystem with your third-party systems:
+Connect Sapliy Ecosystem with your third-party systems:
 - Webhook endpoint configuration
 - Event mapping
 - Retry and failure handling
@@ -163,7 +163,7 @@ Schedule a consultation to discuss your requirements:
 - Assess technical complexity
 - Provide initial estimate
 
-**Book a Call**: [calendly.com/fintech-integrations](https://calendly.com/fintech-integrations)
+**Book a Call**: [calendly.com/sapliy-integrations](https://calendly.com/sapliy-integrations)
 
 ### 2. Discovery & Scoping
 
@@ -302,13 +302,13 @@ curl -X POST https://api.sapliy-core.com/v1/integrations/consultations \
 
 - **Email**: integrations@sapliy-core.com
 - **Phone**: +1 (888) 555-INTG
-- **Schedule**: [calendly.com/fintech-integrations](https://calendly.com/fintech-integrations)
+- **Schedule**: [calendly.com/sapliy-integrations](https://calendly.com/sapliy-integrations)
 
 ---
 
 ## Case Studies
 
-### Startup → Fintech Ecosystem
+### Startup → Sapliy Ecosystem
 
 **Company**: Series A fintech startup
 **Challenge**: Migrate 50,000 customers and $2M MRR from Stripe

@@ -1,11 +1,11 @@
 # Node.js SDK Examples
 
-This directory contains examples of how to use the Sapliy Fintech SDK for Node.js.
+This directory contains examples of how to use the Sapliy SDK for Node.js.
 
 ## Prerequisites
 
 - Node.js 16+
-- A running instance of the Fintech Ecosystem (or access to one)
+- A running instance of the Sapliy Ecosystem (or access to one)
 - An API Key (sk_test_...)
 
 ## Examples

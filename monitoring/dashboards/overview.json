@@ -287,8 +287,7 @@
     "schemaVersion": 27,
     "style": "dark",
     "tags": [
-        "sapliy",
-        "fintech"
+        "sapliy"
     ],
     "templating": {
         "list": []
@@ -311,7 +310,7 @@
         ]
     },
     "timezone": "",
-    "title": "Sapliy Fintech Overview",
+    "title": "Sapliy Overview",
     "uid": "sapliy-overview",
     "version": 1
 }

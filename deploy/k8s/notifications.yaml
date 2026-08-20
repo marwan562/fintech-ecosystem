@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notifications
-  namespace: fintech-ecosystem
+  namespace: sapliy-ecosystem
   labels:
     app: notifications
 spec:
@@ -48,7 +48,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notifications
-  namespace: fintech-ecosystem
+  namespace: sapliy-ecosystem
 spec:
   selector:
     app: notifications

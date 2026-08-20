@@ -24,6 +24,22 @@
 fintech-ecosystem/
 bin/
 
+# Root-level service binaries (built ad hoc with `go build ./cmd/<svc>`)
+/auth
+/billing
+/cli
+/connect
+/events
+/flow-runner
+/flow-service
+/fraud
+/gateway
+/ledger
+/notifications
+/payments
+/reconciler
+/wallet
+
 # local dependencies
 node_modules/
 vendor/

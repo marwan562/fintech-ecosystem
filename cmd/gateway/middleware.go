@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/sapliy/sapliy-core/pkg/apierror"
@@ -43,11 +44,28 @@ func CORSMiddleware(allowedOrigins string, allowedOriginsMap map[string]bool) Mi
 	}
 }
 
+// skipAuth allows a dev-only demo mode (SKIP_AUTH=1) where authenticated
+// routes are served with a synthetic tenant. Never enable in production.
+func skipAuth() bool {
+	return os.Getenv("SKIP_AUTH") == "1"
+}
+
 func (h *GatewayHandler) AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
 
 		if strings.HasPrefix(path, "/auth") || path == "/health" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
+		if skipAuth() {
+			r.Header.Set("X-User-ID", "demo-user")
+			r.Header.Set("X-Environment", "demo")
+			r.Header.Set("X-Org-ID", "tenant_demo")
+			r.Header.Set("X-Role", "admin")
+			r.Header.Set("X-Zone-ID", "demo-zone")
+			r.Header.Set("X-Zone-Mode", "sandbox")
 			next.ServeHTTP(w, r)
 			return
 		}

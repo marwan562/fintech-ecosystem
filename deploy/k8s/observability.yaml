@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: jaeger
-  namespace: fintech-ecosystem
+  namespace: sapliy-ecosystem
   labels:
     app: jaeger
 spec:
@@ -37,7 +37,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: jaeger
-  namespace: fintech-ecosystem
+  namespace: sapliy-ecosystem
 spec:
   selector:
     app: jaeger

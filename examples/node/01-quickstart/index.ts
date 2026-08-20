@@ -1,4 +1,4 @@
-import { FintechClient } from '@sapliyio/fintech';
+import { SapliyClient } from '@sapliyio/fintech';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -7,9 +7,9 @@ const API_KEY = process.env.API_KEY || 'sk_test_123';
 const BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
 
 async function main() {
-    console.log('🚀 Starting Sapliy Fintech Quickstart...');
+    console.log('🚀 Starting Sapliy Quickstart...');
 
-    const client = new FintechClient(API_KEY, BASE_URL);
+    const client = new SapliyClient(API_KEY, BASE_URL);
 
     try {
         // 1. Create a Ledger Account (if not exists)

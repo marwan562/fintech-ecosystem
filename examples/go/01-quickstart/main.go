@@ -7,11 +7,11 @@ import (
 	"os"
 	"time"
 
-	sapliyio "github.com/sapliy/fintech-sdk-go"
+	sapliyio "github.com/sapliy/sapliy-sdk-go"
 )
 
 func main() {
-	fmt.Println("🚀 Starting Sapliy Fintech Quickstart (Go)...")
+	fmt.Println("🚀 Starting Sapliy Quickstart (Go)...")
 	apiKey := os.Getenv("API_KEY")
 	if apiKey == "" {
 		apiKey = "sk_test_123"

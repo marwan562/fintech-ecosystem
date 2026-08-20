@@ -1,13 +1,13 @@
 # Cloud Architecture
 
-This document describes the architecture of the **Fintech Cloud**, a managed version of the Fintech Ecosystem platform. It is designed for high availability, security, and multi-tenant isolation.
+This document describes the architecture of the **Sapliy Cloud**, a managed version of the Sapliy Ecosystem platform. It is designed for high availability, security, and multi-tenant isolation.
 
 ## High-Level Overview
 
-The Fintech Cloud operates on a **Single Control Plane, Multi-Data Plane** architecture.
+The Sapliy Cloud operates on a **Single Control Plane, Multi-Data Plane** architecture.
 
 - **Control Plane**: Centralized management service that handles tenant provisioning, billing, and system-wide configuration.
-- **Data Plane**: Where the actual fintech services (Payments, Ledger, Auth) run. Tenants are isolated within the data plane.
+- **Data Plane**: Where the actual sapliy services (Payments, Ledger, Auth) run. Tenants are isolated within the data plane.
 
 ```mermaid
 graph TD
@@ -70,7 +70,7 @@ The managed platform runs on AWS (primary target) using industry-standard cloud 
 
 ## Security Architecture
 
-security is paramount for a fintech cloud.
+security is paramount for a sapliy cloud.
 
 1.  **Network Security**:
     - All services run in private subnets.

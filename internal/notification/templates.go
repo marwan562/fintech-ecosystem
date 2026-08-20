@@ -38,7 +38,7 @@ var Templates = map[string]string{
 		We're excited to have you on board. Start exploring our services today.
 
 		Best regards,
-		The Fintech Team
+		The Sapliy Team
 	`,
 	"otp": `
 		Your verification code is: {{.OTPCode}}

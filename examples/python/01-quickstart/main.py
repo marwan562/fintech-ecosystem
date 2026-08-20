@@ -3,17 +3,17 @@ import time
 import sys
 
 # Ensure we can import the SDK if not installed
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../fintech-sdk-python')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../sapliy-sdk-python')))
 
-from sapliyio_fintech import FintechClient
+from sapliyio_fintech import SapliyClient
 
 def main():
-    print("🚀 Starting Sapliy Fintech Quickstart (Python)...")
+    print("🚀 Starting Sapliy Quickstart (Python)...")
 
     api_key = os.getenv("API_KEY", "sk_test_123")
     base_url = os.getenv("BASE_URL", "http://localhost:8080")
 
-    client = FintechClient(api_key=api_key, base_url=base_url)
+    client = SapliyClient(api_key=api_key, base_url=base_url)
 
     try:
         # 1. Create a Ledger Account

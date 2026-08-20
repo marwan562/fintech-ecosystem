@@ -30,7 +30,7 @@ func main() {
 	params := &resend.SendEmailRequest{
 		From:    from,
 		To:      []string{to},
-		Subject: "Test Email from Sapliy Fintech",
+		Subject: "Test Email from Sapliy",
 		Html:    "<p>This is a test email to verify Resend integration.</p>",
 	}
 

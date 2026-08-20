@@ -1,4 +1,4 @@
-# Sapliy Fintech Architecture
+# Sapliy Architecture
 
 **Event-driven automation & policy platform for fintech and business flows**
 
@@ -128,7 +128,7 @@ Sapliy runs on the **same codebase** in two modes:
 
 - **Target**: Enterprises, regulated industries, data sovereignty requirements
 - **Deployment**: Docker, Kubernetes, Helm charts
-- **Endpoint**: `https://fintech.yourcompany.com` (your domain)
+- **Endpoint**: `https://sapliy.yourcompany.com` (your domain)
 - **Security**: Your VPC/infrastructure, audit controls, compliance-ready
 - **Cost**: License fee + support
 - **Maintenance**: Your team controls upgrades, patches
@@ -142,12 +142,12 @@ Sapliy runs on the **same codebase** in two modes:
 | Repository             | Purpose                                                                  | Talks To                           | Does NOT                                         |
 | ---------------------- | ------------------------------------------------------------------------ | ---------------------------------- | ------------------------------------------------ |
 | **sapliy-core**  | The brain: auth, orgs, zones, keys, events, flows, ledger, policy engine | PostgreSQL, Kafka, Redis, RabbitMQ | Care about UI, SDK language                      |
-| **fintech-sdk-node**   | Node.js SDK: emit events, verify signatures, retry, test/live mode       | sapliy-core API              | Contain business logic or flow execution         |
-| **fintech-sdk-go**     | Go SDK: same as Node                                                     | sapliy-core API              | Contain business logic or flow execution         |
-| **fintech-sdk-python** | Python SDK: same as Node                                                 | sapliy-core API              | Contain business logic or flow execution         |
+| **sapliy-sdk-node**   | Node.js SDK: emit events, verify signatures, retry, test/live mode       | sapliy-core API              | Contain business logic or flow execution         |
+| **sapliy-sdk-go**     | Go SDK: same as Node                                                     | sapliy-core API              | Contain business logic or flow execution         |
+| **sapliy-sdk-python** | Python SDK: same as Node                                                 | sapliy-core API              | Contain business logic or flow execution         |
 | **sapliy-ui**         | React components: checkout, payment forms, dashboards                    | Uses publishable_key only          | Execute logic, hold secrets, admin actions       |
 | **sapliy-console** | Flow Builder UI: visual automation editor                                | sapliy-core only             | Execute logic, talk directly to SDK users        |
-| **fintech-testing**    | Testing toolkit: local flow validation, CI/CD integration                | sapliy-core API              | Contain business logic, execute production flows |
+| **sapliy-testing**    | Testing toolkit: local flow validation, CI/CD integration                | sapliy-core API              | Contain business logic, execute production flows |
 | **sapliy-cli**         | Developer CLI: login, listen, trigger, debug                             | sapliy-core WebSocket        | Hold state, execute production logic             |
 | **sapliy-docs**       | Documentation site                                                       | Static content                     | —                                                |
 
@@ -160,7 +160,7 @@ graph TB
     subgraph "Developer Experience"
         SDK[SDK: Node/Go/Python]
         CLI[Sapliy CLI]
-        UI[Fintech UI Components]
+        UI[Sapliy UI Components]
     end
 
     subgraph "Automation Layer"
@@ -328,7 +328,7 @@ Each key includes:
 
 - 📦 Publish sapliy-core as open-source (MIT license)
 - 🐍 Python SDK (`sapliyio-fintech`)
-- 🔵 Go SDK (`fintech-sdk-go`)
+- 🔵 Go SDK (`sapliy-sdk-go`)
 - 🧪 Testing toolkit (`@sapliyio/fintech-testing`)
 - 📚 Complete documentation
 - 🎓 Example applications (checkout flow, payment routing, notifications)
@@ -509,7 +509,7 @@ await sapliy.listen("payment.*");
 
 - **Node.js/JavaScript**: `@sapliyio/fintech`
 - **Python**: `sapliyio-fintech`
-- **Go**: `fintech-sdk-go`
+- **Go**: `sapliy-sdk-go`
 - **Future**: Ruby, Java, .NET, PHP
 
 ---
@@ -782,7 +782,7 @@ CREATE TABLE ledger_entries (
 | **Scalability**    | Auto-scaling, unlimited      | Manual + Kubernetes orchestration      |
 | **Data Residency** | Sapliy Infrastructure        | Your VPC/On-prem                       |
 | **Cost Model**     | Usage-based (pay-as-you-go)  | Annual license + support               |
-| **API Endpoint**   | `https://api.sapliy.io`      | `https://fintech.yourcompany.com`      |
+| **API Endpoint**   | `https://api.sapliy.io`      | `https://sapliy.yourcompany.com`      |
 | **SDKs Work?**     | ✅ Yes (both modes)          | ✅ Yes (configurable endpoint)         |
 | **Flow Builder**   | ✅ Cloud UI                  | ✅ Self-hosted UI                      |
 | **Audit Trails**   | Sapliy-managed               | Customer-controlled logs               |
@@ -886,11 +886,11 @@ When choosing between SaaS and Self-Hosted:
 ## Related Repositories
 
 - [sapliy-core](https://github.com/sapliy/sapliy-core) — Core backend services (Go)
-- [fintech-sdk-node](https://github.com/sapliy/fintech-sdk-node) — Node.js SDK (`@sapliyio/fintech`)
-- [fintech-sdk-go](https://github.com/sapliy/fintech-sdk-go) — Go SDK (`fintech-sdk-go`)
-- [fintech-sdk-python](https://github.com/sapliy/fintech-sdk-python) — Python SDK (`sapliyio-fintech`)
+- [sapliy-sdk-node](https://github.com/sapliy/sapliy-sdk-node) — Node.js SDK (`@sapliyio/fintech` *legacy name*)
+- [sapliy-sdk-go](https://github.com/sapliy/sapliy-sdk-go) — Go SDK (`github.com/sapliy/sapliy-sdk-go`)
+- [sapliy-sdk-python](https://github.com/sapliy/sapliy-sdk-python) — Python SDK (`sapliyio-fintech` *legacy name*)
 - [sapliy-ui](https://github.com/sapliy/sapliy-ui) — React components (`@sapliyio/sapliy-ui`)
-- [fintech-testing](https://github.com/sapliy/fintech-testing) — Testing toolkit (`@sapliyio/fintech-testing`)
+- [sapliy-testing](https://github.com/sapliy/sapliy-testing) — Testing toolkit (`@sapliyio/fintech-testing` *legacy name*)
 - [sapliy-console](https://github.com/sapliy/sapliy-console) — Flow Builder UI (React)
 - [sapliy-cli](https://github.com/sapliy/sapliy-cli) — Developer CLI (`@sapliyio/sapliy-cli`)
 - [sapliy-docs](https://github.com/sapliy/sapliy-docs) — Documentation site
@@ -954,7 +954,7 @@ MIT © [Sapliy](https://github.com/sapliy)
 - PCI-DSS compliance documentation
 - GDPR/CCPA data handling features
 - Python SDK (`sapliyio-fintech`)
-- Go SDK (`fintech-sdk-go`)
+- Go SDK (`sapliy-sdk-go`)
 - Multi-region support for self-hosted
 - Enterprise license model
 
@@ -1255,7 +1255,7 @@ sapliy logs --follow                          # Stream all logs
 
 ```bash
 # Fresh start - everything with one command
-$ cd my-fintech-app
+$ cd my-sapliy-app
 $ sapliy dev
 
 ✨ Starting Sapliy in development mode...

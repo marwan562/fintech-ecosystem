@@ -21,7 +21,7 @@ type Config struct {
 	DLQStreamPrefix string        // DLQ stream prefix (default: "dlq")
 }
 
-// DefaultConfig returns sensible defaults for fintech operations
+// DefaultConfig returns sensible defaults for sapliy operations
 func DefaultConfig() Config {
 	return Config{
 		MaxAttempts:     5,

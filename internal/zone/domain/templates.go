@@ -43,7 +43,7 @@ func ListTemplates() []Template {
 func init() {
 	RegisterTemplate(Template{
 		Name:        "default",
-		Description: "Standard fintech setup with Revenue and Platform accounts.",
+		Description: "Standard sapliy setup with Revenue and Platform accounts.",
 		Apply: func(ctx context.Context, z *Zone, p TemplateProviders) error {
 			// 1. Create Default Ledger Accounts
 			err := p.CreateLedgerAccount(ctx, "Revenue", "revenue", "USD", z.ID, string(z.Mode))

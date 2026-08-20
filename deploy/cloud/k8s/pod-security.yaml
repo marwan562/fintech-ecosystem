@@ -1,7 +1,7 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: restricted-fintech
+  name: restricted-sapliy
 spec:
   privileged: false
   # Required to prevent escalations to root

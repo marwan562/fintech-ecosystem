@@ -56,6 +56,10 @@ func (h *GatewayHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case strings.HasPrefix(p, "/flows") || strings.HasPrefix(p, "/executions"):
 		h.proxyRequest(h.flowServiceURL, w, r)
 
+	case strings.HasPrefix(p, "/playbooks"):
+		h.routePlaybooks(w, r, p)
+		return
+
 	case strings.HasPrefix(p, "/zones"):
 		// Some /zones endpoints belong to flow-service and events-service
 		if strings.Contains(p, "/flows") {

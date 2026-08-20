@@ -30,10 +30,10 @@ jobs:
           # Find all proto files and generate OpenAPI specs
           # We include third_party for googleapis
           protoc -I . -I third_party \
-            --openapiv2_out=logtostderr=true,allow_merge=true,merge_file_name=fintech:generated/openapi \
+            --openapiv2_out=logtostderr=true,allow_merge=true,merge_file_name=sapliy:generated/openapi \
             $(find proto -name "*.proto")
 
-          # The merge option creates a single 'fintech.swagger.json' if possible, or separate files.
+          # The merge option creates a single 'sapliy.swagger.json' if possible, or separate files.
           # Let's adjust the generation to keep it simple first or just point to the right file later.
           # With allow_merge=true, it tries to merge.
 
@@ -43,14 +43,14 @@ jobs:
         uses: openapi-generators/openapitools-generator-action@v1
         with:
           generator: typescript-axios
-          openapi-file: generated/openapi/fintech.swagger.json
+          openapi-file: generated/openapi/sapliy.swagger.json
           command-args: -o generated/sdks/node
 
       - name: Generate Python SDK
         uses: openapi-generators/openapitools-generator-action@v1
         with:
           generator: python
-          openapi-file: generated/openapi/fintech.swagger.json
+          openapi-file: generated/openapi/sapliy.swagger.json
           command-args: -o generated/sdks/python
 
       # In a real pipeline, we would loop over all openapi files.

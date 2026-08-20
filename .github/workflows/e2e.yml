@@ -12,43 +12,43 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Checkout Ecosytem
+            - name: Checkout Ecosystem
               uses: actions/checkout@v4
               with:
-                  path: fintech-ecosystem
+                  path: sapliy-ecosystem
 
             - name: Checkout Testing
               uses: actions/checkout@v4
               with:
-                  repository: sapliy/fintech-testing
-                  path: fintech-testing
+                  repository: sapliy/sapliy-testing
+                  path: sapliy-testing
 
             - name: Checkout SDK Node
               uses: actions/checkout@v4
               with:
-                  repository: sapliy/fintech-sdk-node
-                  path: fintech-sdk-node
+                  repository: sapliy/sapliy-sdk-node
+                  path: sapliy-sdk-node
 
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
                   node-version: "20"
                   cache: "npm"
-                  cache-dependency-path: fintech-testing/package-lock.json
+                  cache-dependency-path: sapliy-testing/package-lock.json
 
             - name: Install dependencies (SDK)
               run: |
-                  cd fintech-sdk-node
+                  cd sapliy-sdk-node
                   npm install
 
             - name: Install dependencies (Testing)
               run: |
-                  cd fintech-testing
+                  cd sapliy-testing
                   npm install
 
             - name: Start Ecosystem Stack
               run: |
-                  cd fintech-ecosystem
+                  cd sapliy-ecosystem
                   docker compose up -d --build
                   echo "Waiting for services to be healthy..."
                   # The health checks in docker-compose will ensure infra is ready
@@ -60,11 +60,11 @@ jobs:
                   GATEWAY_URL: http://localhost:8080
                   AUTH_SERVICE_URL: http://localhost:8081
               run: |
-                  cd fintech-testing
+                  cd sapliy-testing
                   npm test
 
             - name: Dump Logs on Failure
               if: failure()
               run: |
-                  cd fintech-ecosystem
+                  cd sapliy-ecosystem
                   docker compose logs

@@ -27,7 +27,7 @@ fi
 # Run generation
 mkdir -p generated/openapi
 protoc -I . -I third_party \
-  --openapiv2_out=logtostderr=true,allow_merge=true,merge_file_name=fintech:generated/openapi \
+  --openapiv2_out=logtostderr=true,allow_merge=true,merge_file_name=sapliy:generated/openapi \
   $(find proto -name "*.proto")
 
-echo "OpenAPI specs generated in generated/openapi/fintech.swagger.json"
+echo "OpenAPI specs generated in generated/openapi/sapliy.swagger.json"

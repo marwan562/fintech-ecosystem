@@ -428,7 +428,7 @@ services:
     build:
       context: ../sapliy-console
       dockerfile: Dockerfile
-    container_name: fintech_automation
+    container_name: sapliy_automation
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8080
       - NEXT_PUBLIC_WS_URL=ws://gateway:8080/v1/events/stream

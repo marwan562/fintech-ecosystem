@@ -1,4 +1,4 @@
-# Contributing to the Fintech Ecosystem
+# Contributing to the Sapliy Ecosystem
 
 Thank you for considering contributing. This document explains how to report bugs, suggest changes, open PRs, and follow our commit and code style.
 

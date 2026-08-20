@@ -1,6 +1,6 @@
 # Kubernetes Deployment Guide
 
-This directory contains the Kubernetes manifests to deploy the entire Fintech Ecosystem.
+This directory contains the Kubernetes manifests to deploy the entire Sapliy Ecosystem.
 
 ## Prerequisites
 

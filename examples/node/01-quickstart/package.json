@@ -1,7 +1,7 @@
 {
-    "name": "fintech-quickstart",
+    "name": "sapliy-quickstart",
     "version": "1.0.0",
-    "description": "Quickstart example for Sapliy Fintech SDK",
+    "description": "Quickstart example for the Sapliy SDK",
     "main": "index.js",
     "scripts": {
         "start": "ts-node index.ts"

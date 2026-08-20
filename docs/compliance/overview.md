@@ -1,6 +1,6 @@
 # Enterprise Compliance Overview
 
-This section documents the compliance program for the Fintech Ecosystem Managed Cloud. We adhere to strict security and data protection standards to ensure the safety of financial data.
+This section documents the compliance program for the Sapliy Ecosystem Managed Cloud. We adhere to strict security and data protection standards to ensure the safety of financial data.
 
 ## Compliance Scope
 
@@ -11,13 +11,13 @@ This section documents the compliance program for the Fintech Ecosystem Managed 
 
 ## Shared Responsibility Model
 
-Security is a shared responsibility between the Fintech Cloud (Us) and the Customer (You).
+Security is a shared responsibility between the Sapliy Cloud (Us) and the Customer (You).
 
 ### 1. Our Responsibility (Security OF the Cloud)
 - **Physical Security**: Managed by AWS (Data centers, power, cooling).
 - **Network Security**: VPC configuration, firewalls (Security Groups), DDoS protection (AWS Shield).
 - **Infrastructure**: Patching OS, Kubernetes, Databases, and core software.
-- **Application Logic**: Secure coding of the Fintech primitives (Ledger, Payments).
+- **Application Logic**: Secure coding of the Sapliy primitives (Ledger, Payments).
 - **Access Control**: Managing administrative access to the platform.
 
 ### 2. Customer Responsibility (Security IN the Cloud)

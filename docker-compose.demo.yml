@@ -1,0 +1,39 @@
+# Playbook demo stack: gateway + console only.
+# Stores are in-memory; no DB/queue/observability. See ~/Sapliy/DEMO-RUNBOOK.md
+name: sapliy-demo
+
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.demo
+    container_name: sapliy_demo_gateway
+    environment:
+      # Dev-only demo mode: serves playbook endpoints without the auth
+      # service using a synthetic tenant. Never set in production.
+      - SKIP_AUTH=1
+    ports:
+      - "8080:8080"
+    healthcheck:
+      # /health returns 200; /v1/playbooks requires an API key (auth service is
+      # out of demo scope) so busybox wget would treat its 401 as a failure.
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  console:
+    build:
+      context: ../sapliy-automation
+      dockerfile: Dockerfile
+    container_name: sapliy_demo_console
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8080/v1/events/stream
+    ports:
+      - "3000:3000"
+    depends_on:
+      - gateway
+    restart: unless-stopped

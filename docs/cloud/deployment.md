@@ -1,6 +1,6 @@
 # Cloud Deployment Guide
 
-This guide details how to deploy the Fintech Ecosystem infrastructure to AWS using Terraform and Helm.
+This guide details how to deploy the Sapliy Ecosystem infrastructure to AWS using Terraform and Helm.
 
 ## Prerequisites
 
@@ -28,7 +28,7 @@ Create a `terraform.tfvars` file to customize your deployment:
 ```hcl
 region          = "us-east-1"
 environment     = "production"
-cluster_name    = "fintech-cloud-prod"
+cluster_name    = "sapliy-cloud-prod"
 vpc_cidr        = "10.0.0.0/16"
 db_instance_class = "db.t4g.large"
 allowed_cidrs   = ["1.2.3.4/32"] # Admin VPN IPs
@@ -52,15 +52,15 @@ Once infrastructure is ready, deploy the application stack.
 Connect to the new EKS cluster.
 
 ```bash
-aws eks update-kubeconfig --region us-east-1 --name fintech-cloud-prod
+aws eks update-kubeconfig --region us-east-1 --name sapliy-cloud-prod
 ```
 
 ### 2. Configure Secrets
 We use External Secrets Operator to fetch secrets from AWS Secrets Manager. Ensure the following secrets are created in AWS:
 
-- `fintech/prod/database-credentials`
-- `fintech/prod/kafka-sasl`
-- `fintech/prod/jwt-secrets`
+- `sapliy/prod/database-credentials`
+- `sapliy/prod/kafka-sasl`
+- `sapliy/prod/jwt-secrets`
 
 ### 3. Deploy Helm Chart
 Deploy the `sapliy-core` chart.
